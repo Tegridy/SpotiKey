@@ -1,0 +1,22 @@
+plugins {
+    id 'java'
+}
+
+group 'org.spotikey'
+version '0.1'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.0'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.7.0'
+
+    implementation group: 'net.java.dev.jna', name: 'jna', version: '5.8.0'
+
+}
+
+test {
+    useJUnitPlatform()
+}
