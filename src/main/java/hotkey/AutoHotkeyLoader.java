@@ -12,11 +12,11 @@ public class AutoHotkeyLoader {
     private final String userDir = System.getProperty("user.dir");
     private final String autohotkeyDir = userDir + "\\src\\main\\java\\libs";
     private final String scriptsDir = userDir + "\\src\\main\\resources\\scripts\\SpotifyGlobalHotkeys.ahk";
-    AutoHotkeyDll autoHotKeyDll;
+    private static AutoHotkeyDll autoHotKeyDll;
     private final Logger logger;
 
 
-    public AutoHotkeyLoader() {
+    private AutoHotkeyLoader() {
         logger = Logger.getLogger(getClass().getName());
 
         setLibsPath();
@@ -39,5 +39,12 @@ public class AutoHotkeyLoader {
         autoHotKeyDll.ahkTextDll(new WString(""),new WString(""),new WString(""));
         autoHotKeyDll.addFile(new WString(scriptsDir), 1);
         logger.log(Level.INFO, "Add script file to program");
+    }
+
+    public static AutoHotkeyDll getInstance() {
+        if (autoHotKeyDll == null) {
+            new AutoHotkeyLoader();
+        }
+        return autoHotKeyDll;
     }
 }

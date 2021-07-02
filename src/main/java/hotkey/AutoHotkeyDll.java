@@ -12,5 +12,7 @@ public interface AutoHotkeyDll extends Library {
 
     void ahkTextDll(WString s, WString o, WString p);
 
+    void ahkFunction(WString f);
+
     void ahkFunction(WString f, WString p1);
 }

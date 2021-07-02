@@ -1,8 +1,10 @@
-import hotkey.AutoHotkeyLoader;
+import player.PlayerController;
 
 public class Main {
 
     public static void main(String[] args) {
-        AutoHotkeyLoader autoHotkeyLoader = new AutoHotkeyLoader();
+        PlayerController playerController = new PlayerController();
+
+
     }
 }
