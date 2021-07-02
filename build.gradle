@@ -14,6 +14,7 @@ dependencies {
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.7.0'
 
     implementation group: 'net.java.dev.jna', name: 'jna', version: '5.8.0'
+    implementation group: 'lc.kra.system', name: 'system-hook', version: '3.8'
 
 }
 
