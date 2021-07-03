@@ -43,4 +43,36 @@ public class Config {
         return isModifierKeyPressed(event) &&
                 (event.getVirtualKeyCode() == volumeDownKey);
     }
+
+    public boolean controlMustBePressed() {
+        return controlMustBePressed;
+    }
+
+    public boolean altMustBePressed() {
+        return altMustBePressed;
+    }
+
+    public boolean shiftMustBePressed() {
+        return shiftMustBePressed;
+    }
+
+    public int getPlayPauseKey() {
+        return playPauseKey;
+    }
+
+    public int getNextSongKey() {
+        return nextSongKey;
+    }
+
+    public int getPreviousSongKey() {
+        return previousSongKey;
+    }
+
+    public int getVolumeUpKey() {
+        return volumeUpKey;
+    }
+
+    public int getVolumeDownKey() {
+        return volumeDownKey;
+    }
 }
