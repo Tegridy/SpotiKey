@@ -49,6 +49,7 @@
                     	else
                     		spotifyKey("{Space}")
                     	Return
+                        ;PostMessage, 0x319,, 0xE0000,, ahk_exe Spotify.exe
                     }
 
                     jnext()
@@ -63,6 +64,7 @@
                     	else
                     		spotifyKey("^{Right}")
                     	Return
+                        ;PostMessage, 0x319,, 0xB0000,, ahk_exe Spotify.exe
                     }
 
                     jprev()
@@ -71,12 +73,13 @@
                     	WinGet, style, Style, ahk_class Chrome_WidgetWin_0
 
                     	if !(style & 0x10000000)
-                    		Send, {Media_Previous}
+                    		Send, {Media_Prev}
                     	else if WinActive("ahk_class Chrome_WidgetWin_0")
                     		Send, ^{Left}
                     	else
                     		spotifyKey("^{Left}")
                     	Return
+                    	;PostMessage, 0x319,, 0xC0000,, ahk_exe Spotify.exe
                     }
 
                     jfwd()
@@ -114,7 +117,8 @@
                     	if WinActive("ahk_class Chrome_WidgetWin_0")
                     		Send, ^{Up}
                     	else
-                    		spotifyKey("^{Up}")
+                    		;spotifyKey("^{Up}")
+                    		SoundSet +5
                     	Return
                     }
 
@@ -125,7 +129,8 @@
                     	if WinActive("ahk_class Chrome_WidgetWin_0")
                     		Send, ^{Down}
                     	else
-                    		spotifyKey("^{Down}")
+                    		;spotifyKey("^{Down}")
+                    		SoundSet -5
                     	Return
                     }
 

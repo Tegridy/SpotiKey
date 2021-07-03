@@ -16,21 +16,12 @@ public class PlayerController {
         this.autoHotkeyDll.ahkFunction(new WString("jplaypause"));
     }
 
-
     public void skipToNextSong() {
         this.autoHotkeyDll.ahkFunction(new WString("jnext"));
     }
 
     public void skipToPreviousSong() {
         this.autoHotkeyDll.ahkFunction(new WString("jprev"));
-    }
-
-    public void scrollSongForward() {
-        this.autoHotkeyDll.ahkFunction(new WString("jfwd"));
-    }
-
-    public void scrollSongBackward() {
-        this.autoHotkeyDll.ahkFunction(new WString("jback"));
     }
 
     public void volumeUp() {
