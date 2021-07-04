@@ -75,4 +75,50 @@ public class Config {
     public int getVolumeDownKey() {
         return volumeDownKey;
     }
+
+    public void setControlMustBePressed(boolean controlMustBePressed) {
+        this.controlMustBePressed = controlMustBePressed;
+    }
+
+    public void setAltMustBePressed(boolean altMustBePressed) {
+        this.altMustBePressed = altMustBePressed;
+    }
+
+    public void setShiftMustBePressed(boolean shiftMustBePressed) {
+        this.shiftMustBePressed = shiftMustBePressed;
+    }
+
+    public void setPlayPauseKey(int playPauseKey) {
+        this.playPauseKey = playPauseKey;
+    }
+
+    public void setNextSongKey(int nextSongKey) {
+        this.nextSongKey = nextSongKey;
+    }
+
+    public void setPreviousSongKey(int previousSongKey) {
+        this.previousSongKey = previousSongKey;
+    }
+
+    public void setVolumeUpKey(int volumeUpKey) {
+        this.volumeUpKey = volumeUpKey;
+    }
+
+    public void setVolumeDownKey(int volumeDownKey) {
+        this.volumeDownKey = volumeDownKey;
+    }
+
+    @Override
+    public String toString() {
+        return "Config{" +
+                "controlMustBePressed=" + controlMustBePressed +
+                ", altMustBePressed=" + altMustBePressed +
+                ", shiftMustBePressed=" + shiftMustBePressed +
+                ", playPauseKey=" + playPauseKey +
+                ", nextSongKey=" + nextSongKey +
+                ", previousSongKey=" + previousSongKey +
+                ", volumeUpKey=" + volumeUpKey +
+                ", volumeDownKey=" + volumeDownKey +
+                '}';
+    }
 }
