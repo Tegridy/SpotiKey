@@ -1,5 +1,6 @@
 plugins {
-    id 'java'
+    id 'application'
+    id 'org.openjfx.javafxplugin' version '0.0.10'
 }
 
 group 'org.spotikey'
@@ -20,6 +21,13 @@ dependencies {
 
 }
 
+javafx {
+    version = "16"
+    modules = [ 'javafx.controls', 'javafx.fxml' ]
+}
+
 test {
     useJUnitPlatform()
 }
+
+mainClassName = 'Main'
