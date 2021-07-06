@@ -7,17 +7,17 @@
     <TabPane prefHeight="200.0" prefWidth="200.0" tabClosingPolicy="UNAVAILABLE">
         <Tab text="Settings">
             <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
-                <CheckBox fx:id="controlEnabledCheckBox" layoutX="14.0" layoutY="14.0" mnemonicParsing="false" onMouseClicked="#getControlButtonState" text="Ctrl" />
-                <CheckBox fx:id="altEnabledCheckBox" layoutX="117.0" layoutY="14.0" mnemonicParsing="false" onMouseClicked="#getAltButtonState" text="Alt" />
-                <CheckBox fx:id="shiftEnabledCheckBox" layoutX="229.0" layoutY="14.0" mnemonicParsing="false" onMouseClicked="#getShiftButtonState" text="Shift" />
+                <CheckBox fx:id="controlCheckBox" layoutX="14.0" layoutY="14.0" mnemonicParsing="false" onMouseClicked="#getControlButtonState" text="Ctrl" />
+                <CheckBox fx:id="altCheckBox" layoutX="117.0" layoutY="14.0" mnemonicParsing="false" onMouseClicked="#getAltButtonState" text="Alt" />
+                <CheckBox fx:id="shiftCheckBox" layoutX="229.0" layoutY="14.0" mnemonicParsing="false" onMouseClicked="#getShiftButtonState" text="Shift" />
                 <ListView layoutX="14.0" layoutY="45.0" prefHeight="304.0" prefWidth="200.0" />
-                <CheckBox layoutX="34.0" layoutY="53.0" mnemonicParsing="false" text="Play / Pause" />
-                <CheckBox layoutX="34.0" layoutY="77.0" mnemonicParsing="false" text="Next Song" />
-                <CheckBox layoutX="34.0" layoutY="101.0" mnemonicParsing="false" text="Previous Song" />
-                <CheckBox layoutX="34.0" layoutY="125.0" mnemonicParsing="false" text="Volume Up" />
-                <CheckBox layoutX="34.0" layoutY="148.0" mnemonicParsing="false" text="Volume Down" />
+                <CheckBox fx:id="playPauseCheckBox" layoutX="34.0" layoutY="53.0" mnemonicParsing="false" onMouseClicked="#setCurrentlyActiveOption" text="Play / Pause" />
+                <CheckBox fx:id="nextSongCheckBox" layoutX="34.0" layoutY="77.0" mnemonicParsing="false" onMouseClicked="#setCurrentlyActiveOption" text="Next Song" />
+                <CheckBox fx:id="previousSongChekBox" layoutX="34.0" layoutY="101.0" mnemonicParsing="false" onMouseClicked="#setCurrentlyActiveOption" text="Previous Song" />
+                <CheckBox fx:id="volumeUpCheckBox" layoutX="34.0" layoutY="125.0" mnemonicParsing="false" onMouseClicked="#setCurrentlyActiveOption" text="Volume Up" />
+                <CheckBox fx:id="volumeDownCheckBox" layoutX="34.0" layoutY="148.0" mnemonicParsing="false" onMouseClicked="#setCurrentlyActiveOption" text="Volume Down" />
                 <Label layoutX="220.0" layoutY="117.0" text="Press a key: " />
-                <TextField layoutX="284.0" layoutY="113.0" prefHeight="25.0" prefWidth="89.0" />
+                <TextField layoutX="284.0" layoutY="113.0" onKeyPressed="#assignNewKey" prefHeight="25.0" prefWidth="89.0" />
                 <Label fx:id="testLabel" layoutX="260.0" layoutY="216.0" text="Label" />
             </AnchorPane>
         </Tab>

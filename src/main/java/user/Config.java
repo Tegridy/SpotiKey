@@ -3,15 +3,36 @@ package user;
 import lc.kra.system.keyboard.event.GlobalKeyEvent;
 
 public class Config {
-    boolean controlMustBePressed = true;
-    boolean altMustBePressed = false;
-    boolean shiftMustBePressed = false;
 
-    int playPauseKey = GlobalKeyEvent.VK_UP;
-    int nextSongKey = GlobalKeyEvent.VK_RIGHT;
-    int previousSongKey = GlobalKeyEvent.VK_LEFT;
-    int volumeUpKey = GlobalKeyEvent.VK_OEM_PLUS;
-    int volumeDownKey = GlobalKeyEvent.VK_OEM_MINUS;
+    private static Config instance;
+
+    boolean controlMustBePressed;
+    boolean altMustBePressed;
+    boolean shiftMustBePressed;
+
+    int playPauseKey;
+    int nextSongKey;
+    int previousSongKey;
+    int volumeUpKey;
+    int volumeDownKey;
+
+    private Config() {
+        this.controlMustBePressed = true;
+        this.altMustBePressed = false;
+        this.shiftMustBePressed = false;
+        this.playPauseKey = GlobalKeyEvent.VK_UP;
+        this.nextSongKey = GlobalKeyEvent.VK_RIGHT;
+        this.previousSongKey = GlobalKeyEvent.VK_LEFT;
+        this.volumeUpKey = GlobalKeyEvent.VK_OEM_PLUS;
+        this.volumeDownKey = GlobalKeyEvent.VK_OEM_MINUS;
+    }
+
+    public static Config getInstance() {
+        if (instance == null) {
+            instance = new Config();
+        }
+        return instance;
+    }
 
     private boolean isModifierKeyPressed(GlobalKeyEvent event) {
         return controlMustBePressed == event.isControlPressed() &&

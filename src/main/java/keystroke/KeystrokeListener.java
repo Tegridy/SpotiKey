@@ -25,7 +25,7 @@ public class KeystrokeListener extends Thread{
 
         logger.log(Level.INFO, "Global keyboard hook successfully started");
 
-        Config config = new Config();
+        Config config = Config.getInstance();
 
         keyboardHook.addKeyListener(new GlobalKeyAdapter() {
 
