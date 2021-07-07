@@ -21,7 +21,7 @@ public class KeystrokeListener extends Thread{
         logger = Logger.getLogger(getClass().getName());
         playerController = new PlayerController();
 
-        GlobalKeyboardHook keyboardHook = new GlobalKeyboardHook(true); // Use false here to switch to hook instead of raw input
+        GlobalKeyboardHook keyboardHook = new GlobalKeyboardHook(false); // Use false here to switch to hook instead of raw input
 
         logger.log(Level.INFO, "Global keyboard hook successfully started");
 
@@ -31,7 +31,6 @@ public class KeystrokeListener extends Thread{
 
             @Override
             public void keyPressed(GlobalKeyEvent event) {
-
 
             if (config.playPauseKeysPressed(event)){
                 playerController.playPauseSong();
@@ -44,19 +43,8 @@ public class KeystrokeListener extends Thread{
             } else if (config.volumeDownKeysPressed(event)) {
                 playerController.volumeDown();
             }
-
             }
 
         });
-
-        try {
-            while(run) {
-                Thread.sleep(128);
-            }
-        } catch(InterruptedException e) {
-            logger.log(Level.WARNING, e.getMessage());
-        } finally {
-            keyboardHook.shutdownHook();
-        }
     }
 }

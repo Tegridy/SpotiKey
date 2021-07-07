@@ -1,0 +1,7 @@
+.check-box:focused {
+    -fx-background-color: #2b8ed9;
+}
+
+#controlCheckBox, #altCheckBox, #shiftCheckBox {
+    -fx-background-radius: 5px;
+}

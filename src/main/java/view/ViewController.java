@@ -5,9 +5,11 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.TextField;
 import javafx.scene.input.KeyEvent;
 import javafx.stage.Stage;
 import user.Config;
+import utils.Utils;
 
 import java.io.IOException;
 import java.util.logging.Level;
@@ -44,8 +46,10 @@ public class ViewController {
     @FXML
     CheckBox volumeDownCheckBox;
 
-    CheckBox currentlyActiveCheckBox;
+    @FXML
+    TextField currentKeyTextField;
 
+    CheckBox currentlyActiveCheckBox;
 
     public ViewController() {
         stage = new Stage();
@@ -69,58 +73,56 @@ public class ViewController {
         }
     }
 
+    private void loadConfig() {
+        this.controlCheckBox.setSelected(config.controlMustBePressed());
+        this.altCheckBox.setSelected(config.altMustBePressed());
+        this.shiftCheckBox.setSelected(config.shiftMustBePressed());
+    }
+
     public void showStage() {
         stage.showAndWait();
         logger.log(Level.INFO, "Showing stage");
     }
 
-    @FXML
-    public void getControlButtonState() {
-        System.out.println(controlCheckBox.isSelected());
-    }
-
-    @FXML
-    public void setControlButtonState() {
-        controlCheckBox.setSelected(true);
-    }
-
-    @FXML
-    public void getAltButtonState() {
-        System.out.println(altCheckBox.isSelected());
-    }
-
-    @FXML
-    public void setAltEnabledCheckBoxButtonState() {
-        System.out.println(altCheckBox.isSelected());
-    }
-
-    @FXML
-    public void getShiftButtonState() {
-        System.out.println(shiftCheckBox.isSelected());
-    }
-
-    @FXML
-    public void setShiftEnabledCheckBox() {
-        System.out.println(controlCheckBox.isSelected());
-    }
-
+    // TODO: Refactor this method
     @FXML
     public void setCurrentlyActiveOption(Event e) {
         Object event = e.getSource();
 
         if (event.equals(playPauseCheckBox)) {
             currentlyActiveCheckBox = playPauseCheckBox;
+            currentKeyTextField.setText(findKeyCodeString(config.getPlayPauseKey()));
+            markCheckBoxAndClearTextField(playPauseCheckBox);
+            config.setPlayPauseKeyCombinationActivated(playPauseCheckBox.isSelected());
         } else if (event.equals(nextSongCheckBox)) {
             currentlyActiveCheckBox = nextSongCheckBox;
+            currentKeyTextField.setText(findKeyCodeString(config.getNextSongKey()));
+            markCheckBoxAndClearTextField(nextSongCheckBox);
+            config.setPlayPauseKeyCombinationActivated(nextSongCheckBox.isSelected());
         } else if (event.equals(previousSongCheckBox)) {
             currentlyActiveCheckBox = previousSongCheckBox;
+            currentKeyTextField.setText(findKeyCodeString(config.getPreviousSongKey()));
+            markCheckBoxAndClearTextField(previousSongCheckBox);
+            config.setPlayPauseKeyCombinationActivated(previousSongCheckBox.isSelected());
         } else if (event.equals(volumeUpCheckBox)) {
             currentlyActiveCheckBox = volumeUpCheckBox;
+            currentKeyTextField.setText(findKeyCodeString(config.getVolumeUpKey()));
+            markCheckBoxAndClearTextField(volumeUpCheckBox);
+            config.setPlayPauseKeyCombinationActivated(volumeUpCheckBox.isSelected());
         } else if (event.equals(volumeDownCheckBox)) {
             currentlyActiveCheckBox = volumeDownCheckBox;
+            currentKeyTextField.setText(findKeyCodeString(config.getVolumeDownKey()));
+            markCheckBoxAndClearTextField(volumeDownCheckBox);
+            config.setPlayPauseKeyCombinationActivated(volumeDownCheckBox.isSelected());
         }
 
+
+
         logger.log(Level.INFO, e.getSource().toString() + " key is currently selected to change.");
+    }
+
+    private String findKeyCodeString(int playPauseKeyCode) {
+        return Utils.keyCodes.get(playPauseKeyCode);
     }
 
     @FXML
@@ -141,5 +143,19 @@ public class ViewController {
             }
             logger.log(Level.INFO, "Assigned: " + event.getText() + " as " + currentlyActiveCheckBox.getText() + " key.");
         }
+    }
+
+    private void markCheckBoxAndClearTextField(CheckBox checkBox) {
+        if (checkBox.isSelected()) {
+            checkBox.setStyle("-fx-background-color: #2b8ed9;");
+        } else {
+            checkBox.setStyle("-fx-background-color: white;");
+            resetCurrentKeyTextField();
+        }
+    }
+
+    @FXML
+    private void resetCurrentKeyTextField() {
+        currentKeyTextField.setText(null);
     }
 }

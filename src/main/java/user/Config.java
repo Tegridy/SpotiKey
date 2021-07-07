@@ -16,15 +16,28 @@ public class Config {
     int volumeUpKey;
     int volumeDownKey;
 
+    boolean playPauseKeyCombinationActivated;
+    boolean nextSongKeyCombinationActivated;
+    boolean previousSongKeyCombinationActivated;
+    boolean volumeUpKeyCombinationActivated;
+    boolean volumeDownKeyCombinationActivated;
+
     private Config() {
         this.controlMustBePressed = true;
         this.altMustBePressed = false;
         this.shiftMustBePressed = false;
+
         this.playPauseKey = GlobalKeyEvent.VK_UP;
+        playPauseKeyCombinationActivated = true;
         this.nextSongKey = GlobalKeyEvent.VK_RIGHT;
+        nextSongKeyCombinationActivated = true;
         this.previousSongKey = GlobalKeyEvent.VK_LEFT;
+        previousSongKeyCombinationActivated = true;
         this.volumeUpKey = GlobalKeyEvent.VK_OEM_PLUS;
+        volumeUpKeyCombinationActivated = false;
         this.volumeDownKey = GlobalKeyEvent.VK_OEM_MINUS;
+        volumeDownKeyCombinationActivated = false;
+
     }
 
     public static Config getInstance() {
@@ -127,6 +140,46 @@ public class Config {
 
     public void setVolumeDownKey(int volumeDownKey) {
         this.volumeDownKey = volumeDownKey;
+    }
+
+    public boolean isPlayPauseKeyCombinationActivated() {
+        return playPauseKeyCombinationActivated;
+    }
+
+    public void setPlayPauseKeyCombinationActivated(boolean playPauseKeyCombinationActivated) {
+        this.playPauseKeyCombinationActivated = playPauseKeyCombinationActivated;
+    }
+
+    public boolean isNextSongKeyCombinationActivated() {
+        return nextSongKeyCombinationActivated;
+    }
+
+    public void setNextSongKeyCombinationActivated(boolean nextSongKeyCombinationActivated) {
+        this.nextSongKeyCombinationActivated = nextSongKeyCombinationActivated;
+    }
+
+    public boolean isPreviousSongKeyCombinationActivated() {
+        return previousSongKeyCombinationActivated;
+    }
+
+    public void setPreviousSongKeyCombinationActivated(boolean previousSongKeyCombinationActivated) {
+        this.previousSongKeyCombinationActivated = previousSongKeyCombinationActivated;
+    }
+
+    public boolean isVolumeUpKeyCombinationActivated() {
+        return volumeUpKeyCombinationActivated;
+    }
+
+    public void setVolumeUpKeyCombinationActivated(boolean volumeUpKeyCombinationActivated) {
+        this.volumeUpKeyCombinationActivated = volumeUpKeyCombinationActivated;
+    }
+
+    public boolean isVolumeDownKeyCombinationActivated() {
+        return volumeDownKeyCombinationActivated;
+    }
+
+    public void setVolumeDownKeyCombinationActivated(boolean volumeDownKeyCombinationActivated) {
+        this.volumeDownKeyCombinationActivated = volumeDownKeyCombinationActivated;
     }
 
     @Override
