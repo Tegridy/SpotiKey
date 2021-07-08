@@ -1,4 +1,4 @@
-package user;
+package config;
 
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -10,10 +10,11 @@ import java.util.logging.Logger;
 
 public class LoadConfig {
 
-    private Logger logger;
+    private static Logger logger;
 
-    public LoadConfig(Config config) {
-        logger = Logger.getLogger(getClass().getName());
+    public static void loadConfigFromFile() {
+        logger = Logger.getLogger(LoadConfig.class.getName());
+        Config config = Config.getInstance();
 
         File configFile = new File(System.getProperty("user.dir") + "\\src\\main\\resources\\configs\\conf.json");
 
@@ -36,18 +37,19 @@ public class LoadConfig {
             config.setVolumeUpKey(convertToInt(json.get("volumeUpKey")));
             config.setVolumeDownKey(convertToInt(json.get("volumeDownKey")));
 
-            logger.log(Level.INFO, "Successfully read JSON file to a object.");
+            logger.log(Level.INFO, "Successfully read JSON config file to an object.");
 
         } catch (IOException | ParseException e) {
             logger.log(Level.WARNING, e.getMessage());
         }
     }
 
-    private boolean convertToBoolean(Object jsonObject) {
+
+    private static boolean convertToBoolean(Object jsonObject) {
         return Boolean.parseBoolean(jsonObject.toString());
     }
 
-    private int convertToInt(Object jsonObject) {
+    private static int convertToInt(Object jsonObject) {
         return Integer.parseInt(jsonObject.toString());
     }
 }

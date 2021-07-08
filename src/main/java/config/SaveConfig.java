@@ -1,6 +1,5 @@
-package user;
+package config;
 
-import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
 import java.io.File;
@@ -11,12 +10,11 @@ import java.util.logging.Logger;
 
 public class SaveConfig {
 
-    private Logger logger;
+    private static Logger logger;
 
     @SuppressWarnings("unchecked")
-    public SaveConfig(Config config) {
-
-        logger = Logger.getLogger(getClass().getName());
+    public static void saveConfigToFile(Config config) {
+        logger = Logger.getLogger(SaveConfig.class.getName());
 
         JSONObject userConfig = new JSONObject();
 

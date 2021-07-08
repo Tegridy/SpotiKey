@@ -1,4 +1,4 @@
-package user;
+package config;
 
 import lc.kra.system.keyboard.event.GlobalKeyEvent;
 

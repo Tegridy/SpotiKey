@@ -4,7 +4,7 @@ import lc.kra.system.keyboard.GlobalKeyboardHook;
 import lc.kra.system.keyboard.event.GlobalKeyAdapter;
 import lc.kra.system.keyboard.event.GlobalKeyEvent;
 import player.PlayerController;
-import user.Config;
+import config.Config;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
