@@ -1,5 +1,6 @@
 package view;
 
+import config.LoadConfig;
 import config.SaveConfig;
 import javafx.event.Event;
 import javafx.event.EventType;
@@ -76,7 +77,8 @@ public class ViewController {
         currentlyActiveCheckBox = null;
 
         try {
-            //LoadConfig.loadConfigFromFile();
+
+            LoadConfig.loadConfigFromFile();
 
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/scene.fxml"));
 
@@ -121,8 +123,6 @@ public class ViewController {
     @FXML
     public void setCurrentlyActiveOption(Event e) {
 
-        System.out.println(e);
-
         Object event = e.getSource();
 
         resetHBoxCssBgColorClass();
@@ -134,30 +134,37 @@ public class ViewController {
             ));
             clearTextField(playPauseCheckBox);
             config.setPlayPauseKeyCombinationActivated(playPauseCheckBox.isSelected());
+
+
+
         } else if (event.equals(nextSongHBox)) {
             currentlyActiveCheckBox = nextSongCheckBox;
             currentKeyTextField.setText(findKeyCodeString(
                     nextSongKeyCode == 0 ? config.getNextSongKey() : nextSongKeyCode));
             clearTextField(nextSongCheckBox);
-            config.setPlayPauseKeyCombinationActivated(nextSongCheckBox.isSelected());
+            config.setNextSongKeyCombinationActivated(nextSongCheckBox.isSelected());
+
+
+
+
         } else if (event.equals(previousSongHBox)) {
             currentlyActiveCheckBox = previousSongCheckBox;
             currentKeyTextField.setText(findKeyCodeString(
                     previousSongKeyCode == 0 ? config.getPreviousSongKey() : previousSongKeyCode));
             clearTextField(previousSongCheckBox);
-            config.setPlayPauseKeyCombinationActivated(previousSongCheckBox.isSelected());
+            config.setPreviousSongKeyCombinationActivated(previousSongCheckBox.isSelected());
         } else if (event.equals(volumeUpHBox)) {
             currentlyActiveCheckBox = volumeUpCheckBox;
             currentKeyTextField.setText(findKeyCodeString(
                     volumeUpKeyCode == 0 ? config.getVolumeUpKey() : volumeUpKeyCode));
             clearTextField(volumeUpCheckBox);
-            config.setPlayPauseKeyCombinationActivated(volumeUpCheckBox.isSelected());
+            config.setVolumeUpKeyCombinationActivated(volumeUpCheckBox.isSelected());
         } else if (event.equals(volumeDownHBox)) {
             currentlyActiveCheckBox = volumeDownCheckBox;
             currentKeyTextField.setText(findKeyCodeString(
                     volumeDownKeyCode == 0 ? config.getVolumeDownKey() : volumeDownKeyCode));
             clearTextField(volumeDownCheckBox);
-            config.setPlayPauseKeyCombinationActivated(volumeDownCheckBox.isSelected());
+            config.setVolumeDownKeyCombinationActivated(volumeDownCheckBox.isSelected());
         }
 
         if (e.getSource() instanceof HBox) {
@@ -180,15 +187,13 @@ public class ViewController {
     public void assignNewKey(KeyEvent event) {
         int pressedKeyCode = event.getCode().getCode();
 
-        System.out.println(pressedKeyCode);
-
         String keyType = Utils.keyCodes.get(pressedKeyCode);
 
         if (currentlyActiveCheckBox != null && currentlyActiveCheckBox.isSelected()) {
             if (currentlyActiveCheckBox.equals(playPauseCheckBox)) {
                 this.playPauseKeyCode = pressedKeyCode;
             } else if (currentlyActiveCheckBox.equals(nextSongCheckBox)) {
-                this.nextSongKeyCode = previousSongKeyCode;
+                this.nextSongKeyCode = pressedKeyCode;
             } else if (currentlyActiveCheckBox.equals(previousSongCheckBox)) {
                 this.previousSongKeyCode = pressedKeyCode;
             } else if (currentlyActiveCheckBox.equals(volumeUpCheckBox)) {
@@ -213,17 +218,18 @@ public class ViewController {
         currentKeyTextField.clear();
     }
 
+    // TODO: Find a way to avoid so many if statements
     @FXML
     private void saveConfig() {
         config.setControlMustBePressed(this.controlCheckBox.isSelected());
         config.setAltMustBePressed(this.altCheckBox.isSelected());
         config.setShiftMustBePressed(this.shiftCheckBox.isSelected());
 
-        config.setPlayPauseKey(playPauseKeyCode);
-        config.setNextSongKey(nextSongKeyCode);
-        config.setPreviousSongKey(previousSongKeyCode);
-        config.setVolumeUpKey(volumeUpKeyCode);
-        config.setVolumeDownKey(volumeDownKeyCode);
+        config.setPlayPauseKey(playPauseKeyCode == 0 ? config.getPlayPauseKey() : playPauseKeyCode);
+        config.setNextSongKey(nextSongKeyCode == 0 ? config.getNextSongKey() : nextSongKeyCode);
+        config.setPreviousSongKey(previousSongKeyCode == 0 ? config.getPreviousSongKey() : previousSongKeyCode);
+        config.setVolumeUpKey(volumeUpKeyCode == 0 ? config.getVolumeUpKey() : volumeUpKeyCode);
+        config.setVolumeDownKey(volumeDownKeyCode == 0 ? config.getVolumeDownKey() : volumeDownKeyCode);
 
         SaveConfig.saveConfigToFile(config);
     }
