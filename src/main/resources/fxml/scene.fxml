@@ -31,7 +31,7 @@
                </padding></CheckBox>
                 <ListView fx:id="l" layoutX="14.0" layoutY="45.0" prefHeight="254.0" prefWidth="151.0" />
                 <Label layoutX="171.0" layoutY="117.0" text="Press a key: " />
-                <TextField fx:id="currentKeyTextField" layoutX="235.0" layoutY="113.0" onKeyPressed="#assignNewKey" onMouseClicked="#resetCurrentKeyTextField" prefHeight="25.0" prefWidth="141.0" />
+                <TextField fx:id="currentKeyTextField" layoutX="235.0" layoutY="113.0" onKeyReleased="#assignNewKey" onMouseClicked="#clearCurrentKeyTextField" prefHeight="25.0" prefWidth="141.0" />
             <Button layoutX="271.0" layoutY="287.0" mnemonicParsing="false" onMouseClicked="#saveConfig" prefHeight="25.0" prefWidth="70.0" text="Save" />
             <HBox fx:id="playPauseHBox" layoutX="14.0" layoutY="45.0" onMouseClicked="#setCurrentlyActiveOption" prefHeight="18.0" prefWidth="152.0">
                <children>

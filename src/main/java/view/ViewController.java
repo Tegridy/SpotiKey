@@ -1,21 +1,23 @@
 package view;
 
-import config.LoadConfig;
 import config.SaveConfig;
-import javafx.application.Platform;
 import javafx.event.Event;
+import javafx.event.EventType;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
 import config.Config;
 import utils.Utils;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -58,6 +60,8 @@ public class ViewController {
     @FXML
     HBox volumeDownHBox;
 
+    private final ArrayList<HBox> listItems;
+
 
     private int playPauseKeyCode;
     private int nextSongKeyCode;
@@ -72,7 +76,7 @@ public class ViewController {
         currentlyActiveCheckBox = null;
 
         try {
-            LoadConfig.loadConfigFromFile();
+            //LoadConfig.loadConfigFromFile();
 
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/scene.fxml"));
 
@@ -89,6 +93,9 @@ public class ViewController {
         } catch (IOException e) {
             logger.log(Level.WARNING, e.getMessage());
         }
+
+        this.listItems = new ArrayList<>(Arrays.asList(playPauseHBox, nextSongHBox,
+                previousSongHBox, volumeUpHBox, volumeDownHBox));
     }
 
     private void loadConfig() {
@@ -113,43 +120,56 @@ public class ViewController {
     // TODO: Refactor this method
     @FXML
     public void setCurrentlyActiveOption(Event e) {
-           Object event = e.getSource();
 
+        System.out.println(e);
+
+        Object event = e.getSource();
+
+        resetHBoxCssBgColorClass();
 
         if (event.equals(playPauseHBox)) {
-            playPauseHBox.requestFocus();
             currentlyActiveCheckBox = playPauseCheckBox;
-            currentKeyTextField.setText(findKeyCodeString(config.getPlayPauseKey()));
+            currentKeyTextField.setText(findKeyCodeString(
+                    playPauseKeyCode == 0 ? config.getPlayPauseKey() : playPauseKeyCode
+            ));
             clearTextField(playPauseCheckBox);
             config.setPlayPauseKeyCombinationActivated(playPauseCheckBox.isSelected());
         } else if (event.equals(nextSongHBox)) {
-            nextSongHBox.requestFocus();
             currentlyActiveCheckBox = nextSongCheckBox;
-            currentKeyTextField.setText(findKeyCodeString(config.getNextSongKey()));
+            currentKeyTextField.setText(findKeyCodeString(
+                    nextSongKeyCode == 0 ? config.getNextSongKey() : nextSongKeyCode));
             clearTextField(nextSongCheckBox);
             config.setPlayPauseKeyCombinationActivated(nextSongCheckBox.isSelected());
         } else if (event.equals(previousSongHBox)) {
-            previousSongHBox.requestFocus();
             currentlyActiveCheckBox = previousSongCheckBox;
-            currentKeyTextField.setText(findKeyCodeString(config.getPreviousSongKey()));
+            currentKeyTextField.setText(findKeyCodeString(
+                    previousSongKeyCode == 0 ? config.getPreviousSongKey() : previousSongKeyCode));
             clearTextField(previousSongCheckBox);
             config.setPlayPauseKeyCombinationActivated(previousSongCheckBox.isSelected());
         } else if (event.equals(volumeUpHBox)) {
-            volumeUpHBox.requestFocus();
             currentlyActiveCheckBox = volumeUpCheckBox;
-            currentKeyTextField.setText(findKeyCodeString(config.getVolumeUpKey()));
+            currentKeyTextField.setText(findKeyCodeString(
+                    volumeUpKeyCode == 0 ? config.getVolumeUpKey() : volumeUpKeyCode));
             clearTextField(volumeUpCheckBox);
             config.setPlayPauseKeyCombinationActivated(volumeUpCheckBox.isSelected());
         } else if (event.equals(volumeDownHBox)) {
-            volumeDownHBox.requestFocus();
             currentlyActiveCheckBox = volumeDownCheckBox;
-            currentKeyTextField.setText(findKeyCodeString(config.getVolumeDownKey()));
+            currentKeyTextField.setText(findKeyCodeString(
+                    volumeDownKeyCode == 0 ? config.getVolumeDownKey() : volumeDownKeyCode));
             clearTextField(volumeDownCheckBox);
             config.setPlayPauseKeyCombinationActivated(volumeDownCheckBox.isSelected());
         }
-//
+
+        if (e.getSource() instanceof HBox) {
+            ((HBox) e.getSource()).setStyle("-fx-background-color: #2b8ed9;");
+        }
+
 
         logger.log(Level.INFO, e.getSource().toString() + " key is currently selected to change.");
+    }
+
+    private void resetHBoxCssBgColorClass() {
+        listItems.forEach(item -> item.setStyle("-fx-background-color: transparent;"));
     }
 
     private String findKeyCodeString(int playPauseKeyCode) {
@@ -159,6 +179,10 @@ public class ViewController {
     @FXML
     public void assignNewKey(KeyEvent event) {
         int pressedKeyCode = event.getCode().getCode();
+
+        System.out.println(pressedKeyCode);
+
+        String keyType = Utils.keyCodes.get(pressedKeyCode);
 
         if (currentlyActiveCheckBox != null && currentlyActiveCheckBox.isSelected()) {
             if (currentlyActiveCheckBox.equals(playPauseCheckBox)) {
@@ -172,19 +196,21 @@ public class ViewController {
             } else if (currentlyActiveCheckBox.equals(volumeDownCheckBox)) {
                 this.volumeDownKeyCode = pressedKeyCode;
             }
-            logger.log(Level.INFO, "Assigned: " + event.getText() + " as " + currentlyActiveCheckBox.getText() + " key.");
+            logger.log(Level.INFO, "Assigned: " + keyType + " as " + currentlyActiveCheckBox.getText() + " key.");
         }
+
+        currentKeyTextField.textProperty().setValue(keyType);
     }
 
     private void clearTextField(CheckBox checkBox) {
         if (!checkBox.isSelected()) {
-            resetCurrentKeyTextField();
+            clearCurrentKeyTextField();
         }
     }
 
     @FXML
-    private void resetCurrentKeyTextField() {
-        currentKeyTextField.setText(null);
+    private void clearCurrentKeyTextField() {
+        currentKeyTextField.clear();
     }
 
     @FXML

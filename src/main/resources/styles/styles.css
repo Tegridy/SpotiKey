@@ -1,13 +1,6 @@
-
 HBox {
-    -fx-background-color: transparent;
     -fx-cursor: hand;
 }
-
-HBox:focused {
-    -fx-background-color: #2b8ed9;
-}
-
 
 
 #controlCheckBox:focused, #altCheckBox:focused, #shiftCheckBox:focused {
