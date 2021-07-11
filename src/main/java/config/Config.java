@@ -33,9 +33,9 @@ public class Config {
         nextSongKeyCombinationActivated = true;
         this.previousSongKey = GlobalKeyEvent.VK_LEFT;
         previousSongKeyCombinationActivated = true;
-        this.volumeUpKey = GlobalKeyEvent.VK_OEM_PLUS;
+        this.volumeUpKey = GlobalKeyEvent.VK_P;
         volumeUpKeyCombinationActivated = false;
-        this.volumeDownKey = GlobalKeyEvent.VK_OEM_MINUS;
+        this.volumeDownKey = GlobalKeyEvent.VK_L;
         volumeDownKeyCombinationActivated = false;
 
     }

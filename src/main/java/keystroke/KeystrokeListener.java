@@ -32,15 +32,15 @@ public class KeystrokeListener extends Thread{
             @Override
             public void keyPressed(GlobalKeyEvent event) {
 
-            if (config.playPauseKeysPressed(event)){
+            if (config.playPauseKeysPressed(event) && config.isPlayPauseKeyCombinationActivated()){
                 playerController.playPauseSong();
-            } else if (config.nextSongKeysPressed(event)) {
+            } else if (config.nextSongKeysPressed(event) && config.isNextSongKeyCombinationActivated()) {
                 playerController.skipToNextSong();
-            } else if (config.previousSongKeysPressed(event)) {
+            } else if (config.previousSongKeysPressed(event) && config.isPreviousSongKeyCombinationActivated()) {
                 playerController.skipToPreviousSong();
-            } else if (config.volumeUpKeysPressed(event)) {
+            } else if (config.volumeUpKeysPressed(event) && config.isVolumeUpKeyCombinationActivated()) {
                 playerController.volumeUp();
-            } else if (config.volumeDownKeysPressed(event)) {
+            } else if (config.volumeDownKeysPressed(event) && config.isVolumeDownKeyCombinationActivated()) {
                 playerController.volumeDown();
             }
             }

@@ -30,6 +30,12 @@ public class SaveConfig {
         configProperties.put("volumeUpKey", config.getVolumeUpKey());
         configProperties.put("volumeDownKey", config.getVolumeDownKey());
 
+        configProperties.put("playPauseKeyCombinationActivated", config.isPlayPauseKeyCombinationActivated());
+        configProperties.put("nextSongKeyCombinationActivated", config.isNextSongKeyCombinationActivated());
+        configProperties.put("previousSongKeyCombinationActivated", config.isPreviousSongKeyCombinationActivated());
+        configProperties.put("volumeUpKeyCombinationActivated", config.isVolumeUpKeyCombinationActivated());
+        configProperties.put("volumeDownKeyCombinationActivated", config.isVolumeDownKeyCombinationActivated());
+
         userConfig.put("config", configProperties);
 
         File configFile = new File(System.getProperty("user.dir") + "\\src\\main\\resources\\configs\\conf.json");

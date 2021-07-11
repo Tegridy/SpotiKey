@@ -226,10 +226,15 @@ public class ViewController {
         config.setShiftMustBePressed(this.shiftCheckBox.isSelected());
 
         config.setPlayPauseKey(playPauseKeyCode == 0 ? config.getPlayPauseKey() : playPauseKeyCode);
+        config.setPlayPauseKeyCombinationActivated(playPauseCheckBox.isSelected());
         config.setNextSongKey(nextSongKeyCode == 0 ? config.getNextSongKey() : nextSongKeyCode);
+        config.setNextSongKeyCombinationActivated(nextSongCheckBox.isSelected());
         config.setPreviousSongKey(previousSongKeyCode == 0 ? config.getPreviousSongKey() : previousSongKeyCode);
+        config.setPreviousSongKeyCombinationActivated(previousSongCheckBox.isSelected());
         config.setVolumeUpKey(volumeUpKeyCode == 0 ? config.getVolumeUpKey() : volumeUpKeyCode);
+        config.setVolumeUpKeyCombinationActivated(volumeUpCheckBox.isSelected());
         config.setVolumeDownKey(volumeDownKeyCode == 0 ? config.getVolumeDownKey() : volumeDownKeyCode);
+        config.setVolumeDownKeyCombinationActivated(volumeDownCheckBox.isSelected());
 
         SaveConfig.saveConfigToFile(config);
     }

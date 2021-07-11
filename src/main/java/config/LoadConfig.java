@@ -37,6 +37,12 @@ public class LoadConfig {
             config.setVolumeUpKey(convertToInt(json.get("volumeUpKey")));
             config.setVolumeDownKey(convertToInt(json.get("volumeDownKey")));
 
+            config.setPlayPauseKeyCombinationActivated(convertToBoolean(json.get("playPauseKeyCombinationActivated")));
+            config.setNextSongKeyCombinationActivated(convertToBoolean(json.get("nextSongKeyCombinationActivated")));
+            config.setPreviousSongKeyCombinationActivated(convertToBoolean(json.get("previousSongKeyCombinationActivated")));
+            config.setVolumeUpKeyCombinationActivated(convertToBoolean(json.get("volumeUpKeyCombinationActivated")));
+            config.setVolumeDownKeyCombinationActivated(convertToBoolean(json.get("volumeDownKeyCombinationActivated")));
+
             logger.log(Level.INFO, "Successfully read JSON config file to an object.");
 
         } catch (IOException | ParseException e) {
