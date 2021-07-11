@@ -1,12 +1,10 @@
 package view;
 
 import com.dustinredmond.fxtrayicon.FXTrayIcon;
-import com.sun.tools.javac.Main;
 import config.LoadConfig;
 import config.SaveConfig;
 import javafx.application.Platform;
 import javafx.event.Event;
-import javafx.event.EventType;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -15,18 +13,12 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyEvent;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
 import config.Config;
+import javafx.stage.StageStyle;
 import utils.Utils;
 
-import javax.imageio.ImageIO;
-import java.io.File;
-import java.io.IOException;
-import java.net.URL;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -34,7 +26,7 @@ import java.util.logging.Logger;
 
 public class ViewController {
 
-    public Stage stage;
+    private Stage stage;
     private Logger logger;
     private Config config;
 
@@ -57,7 +49,7 @@ public class ViewController {
     @FXML
     TextField currentKeyTextField;
 
-    CheckBox currentlyActiveCheckBox;
+    HBox currentlyActiveHBox;
 
     @FXML
     HBox playPauseHBox;
@@ -70,8 +62,7 @@ public class ViewController {
     @FXML
     HBox volumeDownHBox;
 
-    private final ArrayList<HBox> listItems;
-
+    private final ArrayList<HBox> hBoxes;
 
     private int playPauseKeyCode;
     private int nextSongKeyCode;
@@ -83,7 +74,7 @@ public class ViewController {
         stage = new Stage();
         logger = Logger.getLogger(getClass().getName());
         config = Config.getInstance();
-        currentlyActiveCheckBox = null;
+        currentlyActiveHBox = null;
 
         try {
 
@@ -103,6 +94,10 @@ public class ViewController {
 
             initTrayIconMenu();
 
+            stage.initStyle(StageStyle.UTILITY);
+
+            stage.setResizable(false);
+
             stage.setScene(new Scene(loader.load()));
 
             logger.log(Level.INFO, "Scene loaded");
@@ -115,8 +110,7 @@ public class ViewController {
             logger.log(Level.WARNING, e.getMessage());
         }
 
-
-        this.listItems = new ArrayList<>(Arrays.asList(playPauseHBox, nextSongHBox,
+        this.hBoxes = new ArrayList<>(Arrays.asList(playPauseHBox, nextSongHBox,
                 previousSongHBox, volumeUpHBox, volumeDownHBox));
     }
 
@@ -151,74 +145,59 @@ public class ViewController {
         this.previousSongCheckBox.setSelected(config.isPreviousSongKeyCombinationActivated());
         this.volumeUpCheckBox.setSelected(config.isVolumeUpKeyCombinationActivated());
         this.volumeDownCheckBox.setSelected(config.isVolumeDownKeyCombinationActivated());
-
     }
-
 
     public void showStage() {
         stage.showAndWait();
         logger.log(Level.INFO, "Showing stage");
     }
 
-
-    // TODO: Refactor this method
     @FXML
-    public void setCurrentlyActiveOption(Event e) {
+    public void setCurrentlyActiveOption(Event event) {
 
-        Object event = e.getSource();
+        Object eventObject = event.getSource();
 
         resetHBoxCssBgColorClass();
 
-        if (event.equals(playPauseHBox)) {
-            currentlyActiveCheckBox = playPauseCheckBox;
-            currentKeyTextField.setText(findKeyCodeString(
-                    playPauseKeyCode == 0 ? config.getPlayPauseKey() : playPauseKeyCode
-            ));
-            clearTextField(playPauseCheckBox);
+        String keyCodeString = "";
+
+        if (eventObject.equals(playPauseHBox)) {
+            currentlyActiveHBox = playPauseHBox;
+            keyCodeString = findKeyCodeString(playPauseKeyCode == 0 ? config.getPlayPauseKey() : playPauseKeyCode);
             config.setPlayPauseKeyCombinationActivated(playPauseCheckBox.isSelected());
 
-
-
-        } else if (event.equals(nextSongHBox)) {
-            currentlyActiveCheckBox = nextSongCheckBox;
-            currentKeyTextField.setText(findKeyCodeString(
-                    nextSongKeyCode == 0 ? config.getNextSongKey() : nextSongKeyCode));
-            clearTextField(nextSongCheckBox);
+        } else if (eventObject.equals(nextSongHBox)) {
+            currentlyActiveHBox = nextSongHBox;
+            keyCodeString = findKeyCodeString(nextSongKeyCode == 0 ? config.getNextSongKey() : nextSongKeyCode);
             config.setNextSongKeyCombinationActivated(nextSongCheckBox.isSelected());
 
-
-
-
-        } else if (event.equals(previousSongHBox)) {
-            currentlyActiveCheckBox = previousSongCheckBox;
-            currentKeyTextField.setText(findKeyCodeString(
-                    previousSongKeyCode == 0 ? config.getPreviousSongKey() : previousSongKeyCode));
-            clearTextField(previousSongCheckBox);
+        } else if (eventObject.equals(previousSongHBox)) {
+            currentlyActiveHBox = previousSongHBox;
+            keyCodeString = findKeyCodeString(previousSongKeyCode == 0 ? config.getPreviousSongKey() : previousSongKeyCode);
             config.setPreviousSongKeyCombinationActivated(previousSongCheckBox.isSelected());
-        } else if (event.equals(volumeUpHBox)) {
-            currentlyActiveCheckBox = volumeUpCheckBox;
-            currentKeyTextField.setText(findKeyCodeString(
-                    volumeUpKeyCode == 0 ? config.getVolumeUpKey() : volumeUpKeyCode));
-            clearTextField(volumeUpCheckBox);
+
+        } else if (eventObject.equals(volumeUpHBox)) {
+            currentlyActiveHBox = volumeUpHBox;
+            keyCodeString = findKeyCodeString(volumeUpKeyCode == 0 ? config.getVolumeUpKey() : volumeUpKeyCode);
             config.setVolumeUpKeyCombinationActivated(volumeUpCheckBox.isSelected());
-        } else if (event.equals(volumeDownHBox)) {
-            currentlyActiveCheckBox = volumeDownCheckBox;
-            currentKeyTextField.setText(findKeyCodeString(
-                    volumeDownKeyCode == 0 ? config.getVolumeDownKey() : volumeDownKeyCode));
-            clearTextField(volumeDownCheckBox);
+
+        } else if (eventObject.equals(volumeDownHBox)) {
+            currentlyActiveHBox = volumeDownHBox;
+            keyCodeString = findKeyCodeString(volumeDownKeyCode == 0 ? config.getVolumeDownKey() : volumeDownKeyCode);
             config.setVolumeDownKeyCombinationActivated(volumeDownCheckBox.isSelected());
         }
 
-        if (e.getSource() instanceof HBox) {
-            ((HBox) e.getSource()).setStyle("-fx-background-color: #2b8ed9;");
+        currentKeyTextField.setText(keyCodeString);
+
+        if (eventObject instanceof HBox) {
+            ((HBox) eventObject).setStyle("-fx-background-color: #2b8ed9;");
         }
 
-
-        logger.log(Level.INFO, e.getSource().toString() + " key is currently selected to change.");
+        logger.log(Level.INFO, eventObject + " key is currently selected to change.");
     }
 
     private void resetHBoxCssBgColorClass() {
-        listItems.forEach(item -> item.setStyle("-fx-background-color: transparent;"));
+        hBoxes.forEach(item -> item.setStyle("-fx-background-color: transparent;"));
     }
 
     private String findKeyCodeString(int playPauseKeyCode) {
@@ -231,51 +210,40 @@ public class ViewController {
 
         String keyType = Utils.keyCodes.get(pressedKeyCode);
 
-        if (currentlyActiveCheckBox != null && currentlyActiveCheckBox.isSelected()) {
-            if (currentlyActiveCheckBox.equals(playPauseCheckBox)) {
+        if (currentlyActiveHBox != null) {
+            if (currentlyActiveHBox.equals(playPauseHBox)) {
                 this.playPauseKeyCode = pressedKeyCode;
-            } else if (currentlyActiveCheckBox.equals(nextSongCheckBox)) {
+            } else if (currentlyActiveHBox.equals(nextSongHBox)) {
                 this.nextSongKeyCode = pressedKeyCode;
-            } else if (currentlyActiveCheckBox.equals(previousSongCheckBox)) {
+            } else if (currentlyActiveHBox.equals(previousSongHBox)) {
                 this.previousSongKeyCode = pressedKeyCode;
-            } else if (currentlyActiveCheckBox.equals(volumeUpCheckBox)) {
+            } else if (currentlyActiveHBox.equals(volumeUpHBox)) {
                 this.volumeUpKeyCode = pressedKeyCode;
-            } else if (currentlyActiveCheckBox.equals(volumeDownCheckBox)) {
+            } else if (currentlyActiveHBox.equals(volumeDownHBox)) {
                 this.volumeDownKeyCode = pressedKeyCode;
             }
-            logger.log(Level.INFO, "Assigned: " + keyType + " as " + currentlyActiveCheckBox.getText() + " key.");
+            logger.log(Level.INFO, "Assigned: " + keyType + " as "
+                    + currentlyActiveHBox.getId().replace("HBox", "") + " key.");
         }
 
         currentKeyTextField.textProperty().setValue(keyType);
     }
 
-    private void clearTextField(CheckBox checkBox) {
-        if (!checkBox.isSelected()) {
-            clearCurrentKeyTextField();
-        }
-    }
-
-    @FXML
-    private void clearCurrentKeyTextField() {
-        currentKeyTextField.clear();
-    }
-
-    // TODO: Find a way to avoid so many if statements
     @FXML
     private void saveConfig() {
         config.setControlMustBePressed(this.controlCheckBox.isSelected());
         config.setAltMustBePressed(this.altCheckBox.isSelected());
         config.setShiftMustBePressed(this.shiftCheckBox.isSelected());
 
-        config.setPlayPauseKey(playPauseKeyCode == 0 ? config.getPlayPauseKey() : playPauseKeyCode);
+        config.setPlayPauseKey(playPauseKeyCode);
         config.setPlayPauseKeyCombinationActivated(playPauseCheckBox.isSelected());
-        config.setNextSongKey(nextSongKeyCode == 0 ? config.getNextSongKey() : nextSongKeyCode);
+        config.setNextSongKey(nextSongKeyCode);
         config.setNextSongKeyCombinationActivated(nextSongCheckBox.isSelected());
-        config.setPreviousSongKey(previousSongKeyCode == 0 ? config.getPreviousSongKey() : previousSongKeyCode);
+        config.setPreviousSongKey(previousSongKeyCode);
         config.setPreviousSongKeyCombinationActivated(previousSongCheckBox.isSelected());
-        config.setVolumeUpKey(volumeUpKeyCode == 0 ? config.getVolumeUpKey() : volumeUpKeyCode);
+        config.setVolumeUpKey(volumeUpKeyCode);
         config.setVolumeUpKeyCombinationActivated(volumeUpCheckBox.isSelected());
-        config.setVolumeDownKey(volumeDownKeyCode == 0 ? config.getVolumeDownKey() : volumeDownKeyCode);
+        config.setVolumeDownKey(volumeDownKeyCode);
         config.setVolumeDownKeyCombinationActivated(volumeDownCheckBox.isSelected());
 
         SaveConfig.saveConfigToFile(config);

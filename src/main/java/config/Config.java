@@ -123,23 +123,43 @@ public class Config {
     }
 
     public void setPlayPauseKey(int playPauseKey) {
-        this.playPauseKey = playPauseKey;
+        if (playPauseKey == 0) {
+            this.playPauseKey = this.getPlayPauseKey();
+        } else {
+            this.playPauseKey = playPauseKey;
+        }
     }
 
     public void setNextSongKey(int nextSongKey) {
-        this.nextSongKey = nextSongKey;
+        if (nextSongKey == 0) {
+            this.nextSongKey = this.getNextSongKey();
+        } else {
+            this.nextSongKey = nextSongKey;
+        }
     }
 
     public void setPreviousSongKey(int previousSongKey) {
-        this.previousSongKey = previousSongKey;
+        if (previousSongKey == 0) {
+            this.previousSongKey = this.getPreviousSongKey();
+        } else {
+            this.previousSongKey = previousSongKey;
+        }
     }
 
     public void setVolumeUpKey(int volumeUpKey) {
-        this.volumeUpKey = volumeUpKey;
+        if (volumeUpKey == 0) {
+            this.volumeUpKey = this.getVolumeUpKey();
+        } else {
+            this.volumeUpKey = volumeUpKey;
+        }
     }
 
     public void setVolumeDownKey(int volumeDownKey) {
-        this.volumeDownKey = volumeDownKey;
+        if (volumeDownKey == 0) {
+            this.volumeDownKey = this.getVolumeDownKey();
+        } else {
+            this.volumeDownKey = volumeDownKey;
+        }
     }
 
     public boolean isPlayPauseKeyCombinationActivated() {
