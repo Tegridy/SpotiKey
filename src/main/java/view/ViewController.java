@@ -1,14 +1,19 @@
 package view;
 
+import com.dustinredmond.fxtrayicon.FXTrayIcon;
+import com.sun.tools.javac.Main;
 import config.LoadConfig;
 import config.SaveConfig;
+import javafx.application.Platform;
 import javafx.event.Event;
 import javafx.event.EventType;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.TextField;
+import javafx.scene.image.Image;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
@@ -16,9 +21,13 @@ import javafx.stage.Stage;
 import config.Config;
 import utils.Utils;
 
+import javax.imageio.ImageIO;
+import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
+import java.net.URL;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -82,7 +91,17 @@ public class ViewController {
 
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/scene.fxml"));
 
+
             loader.setController(this);
+
+            System.out.println(getClass().getResource("/icon/s.png"));
+
+            stage.getIcons().add(
+                    new Image(Objects.requireNonNull(
+                            ViewController.class.getResourceAsStream("/icon/keyboard-key-s.png"))));
+
+
+            initTrayIconMenu();
 
             stage.setScene(new Scene(loader.load()));
 
@@ -92,12 +111,34 @@ public class ViewController {
 
             loadConfig();
 
-        } catch (IOException e) {
+        } catch (Exception e) {
             logger.log(Level.WARNING, e.getMessage());
         }
 
+
         this.listItems = new ArrayList<>(Arrays.asList(playPauseHBox, nextSongHBox,
                 previousSongHBox, volumeUpHBox, volumeDownHBox));
+    }
+
+    private void initTrayIconMenu() {
+        FXTrayIcon icon = new FXTrayIcon(stage, getClass().getResource("/icon/keyboard-key-s.png"));
+
+        MenuItem settingsMenuItem = new MenuItem("Settings");
+        MenuItem exitAppMenuItem = new MenuItem("Exit");
+
+        settingsMenuItem.setOnAction(event -> {
+            stage.show();
+        });
+
+        exitAppMenuItem.setOnAction(event -> {
+            Platform.exit();
+            System.exit(0);
+        });
+
+        icon.addMenuItem(settingsMenuItem);
+        icon.addMenuItem(exitAppMenuItem);
+
+        icon.show();
     }
 
     private void loadConfig() {
@@ -112,6 +153,7 @@ public class ViewController {
         this.volumeDownCheckBox.setSelected(config.isVolumeDownKeyCombinationActivated());
 
     }
+
 
     public void showStage() {
         stage.showAndWait();
