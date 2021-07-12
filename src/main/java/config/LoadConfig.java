@@ -43,13 +43,12 @@ public class LoadConfig {
             config.setVolumeUpKeyCombinationActivated(convertToBoolean(json.get("volumeUpKeyCombinationActivated")));
             config.setVolumeDownKeyCombinationActivated(convertToBoolean(json.get("volumeDownKeyCombinationActivated")));
 
-            logger.log(Level.INFO, "Successfully read JSON config file to an object.");
+            logger.log(Level.INFO, "Successfully loaded JSON config file to an object.");
 
         } catch (IOException | ParseException e) {
             logger.log(Level.WARNING, e.getMessage());
         }
     }
-
 
     private static boolean convertToBoolean(Object jsonObject) {
         return Boolean.parseBoolean(jsonObject.toString());

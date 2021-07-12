@@ -19,7 +19,9 @@ import config.Config;
 import javafx.stage.StageStyle;
 import utils.Utils;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -76,16 +78,15 @@ public class ViewController {
         config = Config.getInstance();
         currentlyActiveHBox = null;
 
-        try {
+        this.hBoxes = new ArrayList<>(Arrays.asList(playPauseHBox, nextSongHBox,
+                previousSongHBox, volumeUpHBox, volumeDownHBox));
 
+        try {
             LoadConfig.loadConfigFromFile();
 
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/scene.fxml"));
 
-
             loader.setController(this);
-
-            System.out.println(getClass().getResource("/icon/s.png"));
 
             stage.getIcons().add(
                     new Image(Objects.requireNonNull(
@@ -97,45 +98,41 @@ public class ViewController {
             stage.initStyle(StageStyle.UTILITY);
 
             stage.setResizable(false);
-
             stage.setScene(new Scene(loader.load()));
+            stage.setTitle("SpotiKey");
 
             logger.log(Level.INFO, "Scene loaded");
 
-            stage.setTitle("SpotiKey");
-
-            loadConfig();
-
+            updateView();
         } catch (Exception e) {
-            logger.log(Level.WARNING, e.getMessage());
+            logger.log(Level.WARNING, "Exception during initializing view: " + e.getMessage());
         }
-
-        this.hBoxes = new ArrayList<>(Arrays.asList(playPauseHBox, nextSongHBox,
-                previousSongHBox, volumeUpHBox, volumeDownHBox));
     }
 
     private void initTrayIconMenu() {
-        FXTrayIcon icon = new FXTrayIcon(stage, getClass().getResource("/icon/keyboard-key-s.png"));
+            FXTrayIcon icon = new FXTrayIcon(stage, getClass().getResource("/icon/keyboard-key-s.png"));
 
-        MenuItem settingsMenuItem = new MenuItem("Settings");
-        MenuItem exitAppMenuItem = new MenuItem("Exit");
+            MenuItem settingsMenuItem = new MenuItem("Settings");
+            MenuItem exitAppMenuItem = new MenuItem("Exit");
 
-        settingsMenuItem.setOnAction(event -> {
-            stage.show();
-        });
+            settingsMenuItem.setOnAction(event -> {
+                stage.show();
+            });
 
-        exitAppMenuItem.setOnAction(event -> {
-            Platform.exit();
-            System.exit(0);
-        });
+            exitAppMenuItem.setOnAction(event -> {
+                Platform.exit();
+                System.exit(0);
+            });
 
-        icon.addMenuItem(settingsMenuItem);
-        icon.addMenuItem(exitAppMenuItem);
+            icon.addMenuItem(settingsMenuItem);
+            icon.addMenuItem(exitAppMenuItem);
 
-        icon.show();
+            icon.show();
+
+            logger.log(Level.INFO, "Tray icon initialized");
     }
 
-    private void loadConfig() {
+    private void updateView() {
         this.controlCheckBox.setSelected(config.controlMustBePressed());
         this.altCheckBox.setSelected(config.altMustBePressed());
         this.shiftCheckBox.setSelected(config.shiftMustBePressed());
@@ -145,6 +142,8 @@ public class ViewController {
         this.previousSongCheckBox.setSelected(config.isPreviousSongKeyCombinationActivated());
         this.volumeUpCheckBox.setSelected(config.isVolumeUpKeyCombinationActivated());
         this.volumeDownCheckBox.setSelected(config.isVolumeDownKeyCombinationActivated());
+
+        logger.log(Level.INFO, "Updated view");
     }
 
     public void showStage() {
@@ -153,41 +152,41 @@ public class ViewController {
     }
 
     @FXML
-    public void setCurrentlyActiveOption(Event event) {
+    private void setCurrentlyActiveOption(Event event) {
 
         Object eventObject = event.getSource();
 
-        resetHBoxCssBgColorClass();
+        resetHBoxesCssBgColorClass();
 
-        String keyCodeString = "";
+        String keyType = "";
 
         if (eventObject.equals(playPauseHBox)) {
             currentlyActiveHBox = playPauseHBox;
-            keyCodeString = findKeyCodeString(playPauseKeyCode == 0 ? config.getPlayPauseKey() : playPauseKeyCode);
+            keyType = findKeyCodeString(playPauseKeyCode == 0 ? config.getPlayPauseKey() : playPauseKeyCode);
             config.setPlayPauseKeyCombinationActivated(playPauseCheckBox.isSelected());
 
         } else if (eventObject.equals(nextSongHBox)) {
             currentlyActiveHBox = nextSongHBox;
-            keyCodeString = findKeyCodeString(nextSongKeyCode == 0 ? config.getNextSongKey() : nextSongKeyCode);
+            keyType = findKeyCodeString(nextSongKeyCode == 0 ? config.getNextSongKey() : nextSongKeyCode);
             config.setNextSongKeyCombinationActivated(nextSongCheckBox.isSelected());
 
         } else if (eventObject.equals(previousSongHBox)) {
             currentlyActiveHBox = previousSongHBox;
-            keyCodeString = findKeyCodeString(previousSongKeyCode == 0 ? config.getPreviousSongKey() : previousSongKeyCode);
+            keyType = findKeyCodeString(previousSongKeyCode == 0 ? config.getPreviousSongKey() : previousSongKeyCode);
             config.setPreviousSongKeyCombinationActivated(previousSongCheckBox.isSelected());
 
         } else if (eventObject.equals(volumeUpHBox)) {
             currentlyActiveHBox = volumeUpHBox;
-            keyCodeString = findKeyCodeString(volumeUpKeyCode == 0 ? config.getVolumeUpKey() : volumeUpKeyCode);
+            keyType = findKeyCodeString(volumeUpKeyCode == 0 ? config.getVolumeUpKey() : volumeUpKeyCode);
             config.setVolumeUpKeyCombinationActivated(volumeUpCheckBox.isSelected());
 
         } else if (eventObject.equals(volumeDownHBox)) {
             currentlyActiveHBox = volumeDownHBox;
-            keyCodeString = findKeyCodeString(volumeDownKeyCode == 0 ? config.getVolumeDownKey() : volumeDownKeyCode);
+            keyType = findKeyCodeString(volumeDownKeyCode == 0 ? config.getVolumeDownKey() : volumeDownKeyCode);
             config.setVolumeDownKeyCombinationActivated(volumeDownCheckBox.isSelected());
         }
 
-        currentKeyTextField.setText(keyCodeString);
+        updateCurrentKeyTextField(keyType);
 
         if (eventObject instanceof HBox) {
             ((HBox) eventObject).setStyle("-fx-background-color: #2b8ed9;");
@@ -196,8 +195,9 @@ public class ViewController {
         logger.log(Level.INFO, eventObject + " key is currently selected to change.");
     }
 
-    private void resetHBoxCssBgColorClass() {
+    private void resetHBoxesCssBgColorClass() {
         hBoxes.forEach(item -> item.setStyle("-fx-background-color: transparent;"));
+        logger.log(Level.INFO, "Reset HBoxes background color");
     }
 
     private String findKeyCodeString(int playPauseKeyCode) {
@@ -226,7 +226,12 @@ public class ViewController {
                     + currentlyActiveHBox.getId().replace("HBox", "") + " key.");
         }
 
+        updateCurrentKeyTextField(keyType);
+    }
+
+    private void updateCurrentKeyTextField(String keyType) {
         currentKeyTextField.textProperty().setValue(keyType);
+        logger.log(Level.INFO, "Updated currentKeyTextField with value: " + keyType);
     }
 
     @FXML
@@ -245,6 +250,8 @@ public class ViewController {
         config.setVolumeUpKeyCombinationActivated(volumeUpCheckBox.isSelected());
         config.setVolumeDownKey(volumeDownKeyCode);
         config.setVolumeDownKeyCombinationActivated(volumeDownCheckBox.isSelected());
+
+        logger.log(Level.INFO, "Config updated");
 
         SaveConfig.saveConfigToFile(config);
     }

@@ -44,11 +44,11 @@ public class SaveConfig {
 
             file.write(userConfig.toJSONString());
 
-            logger.log(Level.INFO, "Successfully Copied JSON Object to File...");
+            logger.log(Level.INFO, "Successfully copied JSON Object to File...");
             logger.log(Level.INFO, "JSON Object: " + userConfig);
 
         } catch (IOException e) {
-            logger.log(Level.WARNING, e.getMessage());
+            logger.log(Level.WARNING, e.toString());
         }
     }
 }

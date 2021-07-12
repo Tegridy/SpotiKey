@@ -22,7 +22,6 @@ public class AutoHotkeyLoader {
         setLibsPath();
         loadDll();
         loadAhkScript();
-
     }
 
     private void setLibsPath() {

@@ -2,9 +2,14 @@ package config;
 
 import lc.kra.system.keyboard.event.GlobalKeyEvent;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 public class Config {
 
     private static Config instance;
+
+    private Logger logger;
 
     boolean controlMustBePressed;
     boolean altMustBePressed;
@@ -23,6 +28,8 @@ public class Config {
     boolean volumeDownKeyCombinationActivated;
 
     private Config() {
+        logger = Logger.getLogger(getClass().getName());
+
         this.controlMustBePressed = true;
         this.altMustBePressed = false;
         this.shiftMustBePressed = false;
@@ -37,6 +44,8 @@ public class Config {
         volumeUpKeyCombinationActivated = false;
         this.volumeDownKey = GlobalKeyEvent.VK_L;
         volumeDownKeyCombinationActivated = false;
+
+        logger.log(Level.INFO, "Initialize config class");
 
     }
 
