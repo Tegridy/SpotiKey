@@ -9,6 +9,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.Hyperlink;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
@@ -19,6 +20,10 @@ import config.Config;
 import javafx.stage.StageStyle;
 import utils.Utils;
 
+import java.awt.*;
+import java.io.IOException;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Objects;
@@ -72,14 +77,18 @@ public class ViewController {
     private int volumeUpKeyCode;
     private int volumeDownKeyCode;
 
+    @FXML
+    Hyperlink githubUrl;
+    @FXML
+    Hyperlink iconAuthorUrl;
+    @FXML
+    Hyperlink flaticonUrl;
+
     public ViewController() {
         stage = new Stage();
         logger = Logger.getLogger(getClass().getName());
         config = Config.getInstance();
         currentlyActiveHBox = null;
-
-        this.hBoxes = new ArrayList<>(Arrays.asList(playPauseHBox, nextSongHBox,
-                previousSongHBox, volumeUpHBox, volumeDownHBox));
 
         try {
             LoadConfig.loadConfigFromFile();
@@ -104,9 +113,15 @@ public class ViewController {
             logger.log(Level.INFO, "Scene loaded");
 
             updateView();
+
+            setUrlsOpener();
+
         } catch (Exception e) {
             logger.log(Level.WARNING, "Exception during initializing view: " + e.getMessage());
         }
+
+        this.hBoxes = new ArrayList<>(Arrays.asList(playPauseHBox, nextSongHBox,
+                previousSongHBox, volumeUpHBox, volumeDownHBox));
     }
 
     private void initTrayIconMenu() {
@@ -144,6 +159,28 @@ public class ViewController {
         this.volumeDownCheckBox.setSelected(config.isVolumeDownKeyCombinationActivated());
 
         logger.log(Level.INFO, "Updated view");
+    }
+
+    private void setUrlsOpener() {
+        githubUrl.setOnAction(e -> {
+            openURL("https://github.com/Tegridy/SpotiKey");
+        });
+
+        iconAuthorUrl.setOnAction(e -> {
+            openURL("https://www.freepik.com");
+        });
+
+        flaticonUrl.setOnAction(e -> {
+            openURL("https://www.flaticon.com/");
+        });
+    }
+
+    private void openURL(String url) {
+        try {
+            Desktop.getDesktop().browse(new URL(url).toURI());
+        } catch (IOException | URISyntaxException e) {
+            logger.log(Level.WARNING, "Cannot open browser: " + e.getMessage());
+        }
     }
 
     public void showStage() {
@@ -204,6 +241,11 @@ public class ViewController {
         return Utils.keyCodes.get(playPauseKeyCode);
     }
 
+    private void updateCurrentKeyTextField(String keyType) {
+        currentKeyTextField.textProperty().setValue(keyType);
+        logger.log(Level.INFO, "Updated currentKeyTextField with value: " + keyType);
+    }
+
     @FXML
     public void assignNewKey(KeyEvent event) {
         int pressedKeyCode = event.getCode().getCode();
@@ -227,11 +269,6 @@ public class ViewController {
         }
 
         updateCurrentKeyTextField(keyType);
-    }
-
-    private void updateCurrentKeyTextField(String keyType) {
-        currentKeyTextField.textProperty().setValue(keyType);
-        logger.log(Level.INFO, "Updated currentKeyTextField with value: " + keyType);
     }
 
     @FXML

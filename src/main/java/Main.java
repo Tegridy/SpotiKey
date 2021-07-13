@@ -9,8 +9,8 @@ import java.util.logging.Logger;
 
 public class Main extends Application {
 
-    ViewController viewController;
-    Logger logger;
+    private ViewController viewController;
+    private Logger logger;
 
     @Override
     public void start(Stage stage) {
@@ -23,14 +23,13 @@ public class Main extends Application {
     }
 
     @Override
-    public void stop()
-    {
+    public void stop() {
         try {
             super.stop();
             Platform.exit();
             System.exit(0);
         } catch (Exception e) {
-            logger.log(Level.WARNING, "Error while closing app\n" + e.getMessage());
+            logger.log(Level.WARNING, "Error while closing app: " + e.getMessage());
         }
     }
 }
