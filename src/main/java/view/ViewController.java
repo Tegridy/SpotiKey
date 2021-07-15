@@ -190,11 +190,6 @@ public class ViewController {
         }
     }
 
-    public void showStage() {
-        stage.showAndWait();
-        logger.log(Level.INFO, "Showing stage");
-    }
-
     @FXML
     private void setCurrentlyActiveOption(Event event) {
 

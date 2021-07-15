@@ -21,7 +21,6 @@ public class Main extends Application {
             t1.start();
 
             viewController = new ViewController();
-            viewController.showStage();
         } catch (Throwable e) {
             logger.log(Level.WARNING, "Can't start app: " + e.getMessage());
             e.printStackTrace();
