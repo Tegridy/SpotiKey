@@ -10,8 +10,8 @@ import java.util.logging.Logger;
 public class AutoHotkeyLoader {
 
     private final String userDir = System.getProperty("user.dir");
-    private final String autohotkeyDir = userDir + "\\src\\main\\java\\libs";
-    private final String scriptsDir = userDir + "\\src\\main\\resources\\scripts\\SpotifyGlobalHotkeys.ahk";
+    private final String autohotkeyDir = userDir + "\\libs";
+    private final String scriptsDir = userDir + "\\scripts\\SpotifyGlobalHotkeys.ahk";
     private static AutoHotkeyDll autoHotKeyDll;
     private final Logger logger;
 

@@ -15,6 +15,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.HBox;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 import config.Config;
 import javafx.stage.StageStyle;
@@ -97,16 +98,20 @@ public class ViewController {
 
             loader.setController(this);
 
+
             stage.getIcons().add(
-                    new Image(Objects.requireNonNull(
-                            ViewController.class.getResourceAsStream("/icon/keyboard-key-s.png"))));
+                    new Image(
+                            Objects.requireNonNull(getClass().getResourceAsStream("/icon/keyboard-key-s-32.png"))));
+
 
 
             initTrayIconMenu();
 
-            stage.initStyle(StageStyle.UTILITY);
 
+
+            stage.initModality(Modality.APPLICATION_MODAL);
             stage.setResizable(false);
+
             stage.setScene(new Scene(loader.load()));
             stage.setTitle("SpotiKey");
 
@@ -118,6 +123,7 @@ public class ViewController {
 
         } catch (Exception e) {
             logger.log(Level.WARNING, "Exception during initializing view: " + e.getMessage());
+            e.printStackTrace();
         }
 
         this.hBoxes = new ArrayList<>(Arrays.asList(playPauseHBox, nextSongHBox,
@@ -125,7 +131,7 @@ public class ViewController {
     }
 
     private void initTrayIconMenu() {
-            FXTrayIcon icon = new FXTrayIcon(stage, getClass().getResource("/icon/keyboard-key-s.png"));
+            FXTrayIcon icon = new FXTrayIcon(stage, getClass().getResource("/icon/keyboard-key-s-32.png"));
 
             MenuItem settingsMenuItem = new MenuItem("Settings");
             MenuItem exitAppMenuItem = new MenuItem("Exit");
@@ -180,6 +186,7 @@ public class ViewController {
             Desktop.getDesktop().browse(new URL(url).toURI());
         } catch (IOException | URISyntaxException e) {
             logger.log(Level.WARNING, "Cannot open browser: " + e.getMessage());
+            e.printStackTrace();
         }
     }
 

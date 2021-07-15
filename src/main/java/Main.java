@@ -14,12 +14,18 @@ public class Main extends Application {
 
     @Override
     public void start(Stage stage) {
-        logger = Logger.getLogger(getClass().getName());
-        Thread t1 = new Thread(new KeystrokeListener());
-        t1.start();
+        try {
 
-        viewController = new ViewController();
-        viewController.showStage();
+            logger = Logger.getLogger(getClass().getName());
+            Thread t1 = new Thread(new KeystrokeListener());
+            t1.start();
+
+            viewController = new ViewController();
+            viewController.showStage();
+        } catch (Throwable e) {
+            logger.log(Level.WARNING, "Can't start app: " + e.getMessage());
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -30,6 +36,7 @@ public class Main extends Application {
             System.exit(0);
         } catch (Exception e) {
             logger.log(Level.WARNING, "Error while closing app: " + e.getMessage());
+            e.printStackTrace();
         }
     }
 }

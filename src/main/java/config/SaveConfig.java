@@ -38,7 +38,7 @@ public class SaveConfig {
 
         userConfig.put("config", configProperties);
 
-        File configFile = new File(System.getProperty("user.dir") + "\\src\\main\\resources\\configs\\conf.json");
+        File configFile = new File(System.getProperty("user.dir") + "\\configs\\conf.json");
 
         try(FileWriter file = new FileWriter(configFile)) {
 
@@ -49,6 +49,7 @@ public class SaveConfig {
 
         } catch (IOException e) {
             logger.log(Level.WARNING, e.toString());
+            e.printStackTrace();
         }
     }
 }

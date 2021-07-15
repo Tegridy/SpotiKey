@@ -1,0 +1,9 @@
+HBox {
+    -fx-cursor: hand;
+}
+
+
+#controlCheckBox:focused, #altCheckBox:focused, #shiftCheckBox:focused {
+    -fx-background-radius: 5px;
+    -fx-background-color: #2b8ed9;
+}

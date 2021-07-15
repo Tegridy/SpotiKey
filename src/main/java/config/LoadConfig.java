@@ -16,37 +16,41 @@ public class LoadConfig {
         logger = Logger.getLogger(LoadConfig.class.getName());
         Config config = Config.getInstance();
 
-        File configFile = new File(System.getProperty("user.dir") + "\\src\\main\\resources\\configs\\conf.json");
+        File configFile = new File(System.getProperty("user.dir") + "\\configs\\conf.json");
 
-        try(BufferedReader fileReader = new BufferedReader(new FileReader(configFile))) {
+        if (configFile.length() > 1) {
 
-            String currentLine = fileReader.readLine();
+            try (BufferedReader fileReader = new BufferedReader(new FileReader(configFile))) {
 
-            JSONParser parser = new JSONParser();
-            JSONObject json = (JSONObject) parser.parse(currentLine);
+                String currentLine = fileReader.readLine();
 
-            json = (JSONObject) json.get("config");
+                JSONParser parser = new JSONParser();
+                JSONObject json = (JSONObject) parser.parse(currentLine);
 
-            config.setControlMustBePressed(convertToBoolean(json.get("controlMustBePressed")));
-            config.setAltMustBePressed(convertToBoolean(json.get("altMustBePressed")));
-            config.setShiftMustBePressed(convertToBoolean(json.get("shiftMustBePressed")));
+                json = (JSONObject) json.get("config");
 
-            config.setPlayPauseKey(convertToInt(json.get("playPauseKey")));
-            config.setNextSongKey(convertToInt(json.get("nextSongKey")));
-            config.setPreviousSongKey(convertToInt(json.get("previousSongKey")));
-            config.setVolumeUpKey(convertToInt(json.get("volumeUpKey")));
-            config.setVolumeDownKey(convertToInt(json.get("volumeDownKey")));
+                config.setControlMustBePressed(convertToBoolean(json.get("controlMustBePressed")));
+                config.setAltMustBePressed(convertToBoolean(json.get("altMustBePressed")));
+                config.setShiftMustBePressed(convertToBoolean(json.get("shiftMustBePressed")));
 
-            config.setPlayPauseKeyCombinationActivated(convertToBoolean(json.get("playPauseKeyCombinationActivated")));
-            config.setNextSongKeyCombinationActivated(convertToBoolean(json.get("nextSongKeyCombinationActivated")));
-            config.setPreviousSongKeyCombinationActivated(convertToBoolean(json.get("previousSongKeyCombinationActivated")));
-            config.setVolumeUpKeyCombinationActivated(convertToBoolean(json.get("volumeUpKeyCombinationActivated")));
-            config.setVolumeDownKeyCombinationActivated(convertToBoolean(json.get("volumeDownKeyCombinationActivated")));
+                config.setPlayPauseKey(convertToInt(json.get("playPauseKey")));
+                config.setNextSongKey(convertToInt(json.get("nextSongKey")));
+                config.setPreviousSongKey(convertToInt(json.get("previousSongKey")));
+                config.setVolumeUpKey(convertToInt(json.get("volumeUpKey")));
+                config.setVolumeDownKey(convertToInt(json.get("volumeDownKey")));
 
-            logger.log(Level.INFO, "Successfully loaded JSON config file to an object.");
+                config.setPlayPauseKeyCombinationActivated(convertToBoolean(json.get("playPauseKeyCombinationActivated")));
+                config.setNextSongKeyCombinationActivated(convertToBoolean(json.get("nextSongKeyCombinationActivated")));
+                config.setPreviousSongKeyCombinationActivated(convertToBoolean(json.get("previousSongKeyCombinationActivated")));
+                config.setVolumeUpKeyCombinationActivated(convertToBoolean(json.get("volumeUpKeyCombinationActivated")));
+                config.setVolumeDownKeyCombinationActivated(convertToBoolean(json.get("volumeDownKeyCombinationActivated")));
 
-        } catch (IOException | ParseException e) {
-            logger.log(Level.WARNING, e.getMessage());
+                logger.log(Level.INFO, "Successfully loaded JSON config file to an object.");
+
+            } catch (IOException | ParseException e) {
+                logger.log(Level.WARNING, e.getMessage());
+                e.printStackTrace();
+            }
         }
     }
 

@@ -4,7 +4,7 @@ plugins {
 }
 
 group 'org.spotikey'
-version '0.1'
+version '1.0'
 
 repositories {
     mavenCentral()
@@ -28,6 +28,12 @@ javafx {
 
 test {
     useJUnitPlatform()
+}
+
+jar {
+    from('src/main/java') {
+        include  'resources/**'
+    }
 }
 
 mainClassName = 'Main'
