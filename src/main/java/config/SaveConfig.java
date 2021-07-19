@@ -1,12 +1,12 @@
 package config;
 
 import org.json.simple.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public class SaveConfig {
 
@@ -14,7 +14,7 @@ public class SaveConfig {
 
     @SuppressWarnings("unchecked")
     public static void saveConfigToFile(Config config) {
-        logger = Logger.getLogger(SaveConfig.class.getName());
+        logger = LoggerFactory.getLogger(SaveConfig.class);
 
         JSONObject userConfig = new JSONObject();
 
@@ -40,15 +40,15 @@ public class SaveConfig {
 
         File configFile = new File(System.getProperty("user.dir") + "\\configs\\conf.json");
 
-        try(FileWriter file = new FileWriter(configFile)) {
+        try (FileWriter file = new FileWriter(configFile)) {
 
             file.write(userConfig.toJSONString());
 
-            logger.log(Level.INFO, "Successfully copied JSON Object to File...");
-            logger.log(Level.INFO, "JSON Object: " + userConfig);
+            logger.info("Successfully copied JSON Object to File...");
+            logger.info("JSON Object: " + userConfig);
 
         } catch (IOException e) {
-            logger.log(Level.WARNING, e.toString());
+            logger.warn("Can't save config to a file: " + e.getMessage());
             e.printStackTrace();
         }
     }

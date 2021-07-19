@@ -2,10 +2,10 @@ import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.stage.Stage;
 import keystroke.KeystrokeListener;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import view.ViewController;
-
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.io.FileNotFoundException;
 
 public class Main extends Application {
 
@@ -13,16 +13,16 @@ public class Main extends Application {
     private Logger logger;
 
     @Override
-    public void start(Stage stage) {
+    public void start(Stage stage) throws FileNotFoundException {
         try {
+            logger = LoggerFactory.getLogger(Main.class);
 
-            logger = Logger.getLogger(getClass().getName());
             Thread t1 = new Thread(new KeystrokeListener());
             t1.start();
 
             viewController = new ViewController();
         } catch (Throwable e) {
-            logger.log(Level.WARNING, "Can't start app: " + e.getMessage());
+            logger.warn("Can't start app: " + e.getMessage());
             e.printStackTrace();
         }
     }
@@ -34,7 +34,7 @@ public class Main extends Application {
             Platform.exit();
             System.exit(0);
         } catch (Exception e) {
-            logger.log(Level.WARNING, "Error while closing app: " + e.getMessage());
+            logger.warn("Error while closing app: " + e.getMessage());
             e.printStackTrace();
         }
     }

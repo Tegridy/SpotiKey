@@ -18,19 +18,17 @@ import javafx.scene.layout.HBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import config.Config;
-import javafx.stage.StageStyle;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import utils.Utils;
 
-import java.awt.*;
+import java.awt.Desktop;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Objects;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
 
 public class ViewController {
 
@@ -87,7 +85,7 @@ public class ViewController {
 
     public ViewController() {
         stage = new Stage();
-        logger = Logger.getLogger(getClass().getName());
+        logger = LoggerFactory.getLogger(ViewController.class);
         config = Config.getInstance();
         currentlyActiveHBox = null;
 
@@ -98,15 +96,11 @@ public class ViewController {
 
             loader.setController(this);
 
-
             stage.getIcons().add(
                     new Image(
                             Objects.requireNonNull(getClass().getResourceAsStream("/icon/keyboard-key-s-32.png"))));
 
-
-
             initTrayIconMenu();
-
 
 
             stage.initModality(Modality.APPLICATION_MODAL);
@@ -115,14 +109,14 @@ public class ViewController {
             stage.setScene(new Scene(loader.load()));
             stage.setTitle("SpotiKey");
 
-            logger.log(Level.INFO, "Scene loaded");
+            logger.info("Scene loaded");
 
             updateView();
 
             setUrlsOpener();
 
-        } catch (Exception e) {
-            logger.log(Level.WARNING, "Exception during initializing view: " + e.getMessage());
+        } catch (Throwable e) {
+            logger.warn("Exception during initializing view: " + e.getMessage());
             e.printStackTrace();
         }
 
@@ -131,26 +125,26 @@ public class ViewController {
     }
 
     private void initTrayIconMenu() {
-            FXTrayIcon icon = new FXTrayIcon(stage, getClass().getResource("/icon/keyboard-key-s-32.png"));
+        FXTrayIcon icon = new FXTrayIcon(stage, getClass().getResource("/icon/keyboard-key-s-32.png"));
 
-            MenuItem settingsMenuItem = new MenuItem("Settings");
-            MenuItem exitAppMenuItem = new MenuItem("Exit");
+        MenuItem settingsMenuItem = new MenuItem("Settings");
+        MenuItem exitAppMenuItem = new MenuItem("Exit");
 
-            settingsMenuItem.setOnAction(event -> {
-                stage.show();
-            });
+        settingsMenuItem.setOnAction(event -> {
+            stage.show();
+        });
 
-            exitAppMenuItem.setOnAction(event -> {
-                Platform.exit();
-                System.exit(0);
-            });
+        exitAppMenuItem.setOnAction(event -> {
+            Platform.exit();
+            System.exit(0);
+        });
 
-            icon.addMenuItem(settingsMenuItem);
-            icon.addMenuItem(exitAppMenuItem);
+        icon.addMenuItem(settingsMenuItem);
+        icon.addMenuItem(exitAppMenuItem);
 
-            icon.show();
+        icon.show();
 
-            logger.log(Level.INFO, "Tray icon initialized");
+        logger.info("Tray icon initialized");
     }
 
     private void updateView() {
@@ -164,7 +158,7 @@ public class ViewController {
         this.volumeUpCheckBox.setSelected(config.isVolumeUpKeyCombinationActivated());
         this.volumeDownCheckBox.setSelected(config.isVolumeDownKeyCombinationActivated());
 
-        logger.log(Level.INFO, "Updated view");
+        logger.info("Updated view");
     }
 
     private void setUrlsOpener() {
@@ -185,7 +179,7 @@ public class ViewController {
         try {
             Desktop.getDesktop().browse(new URL(url).toURI());
         } catch (IOException | URISyntaxException e) {
-            logger.log(Level.WARNING, "Cannot open browser: " + e.getMessage());
+            logger.warn("Cannot open browser: " + e.getMessage());
             e.printStackTrace();
         }
     }
@@ -231,12 +225,12 @@ public class ViewController {
             ((HBox) eventObject).setStyle("-fx-background-color: #2b8ed9;");
         }
 
-        logger.log(Level.INFO, eventObject + " key is currently selected to change.");
+        logger.info(eventObject + " key is currently selected to change.");
     }
 
     private void resetHBoxesCssBgColorClass() {
         hBoxes.forEach(item -> item.setStyle("-fx-background-color: transparent;"));
-        logger.log(Level.INFO, "Reset HBoxes background color");
+        logger.info("Reset HBoxes background color");
     }
 
     private String findKeyCodeString(int playPauseKeyCode) {
@@ -245,7 +239,7 @@ public class ViewController {
 
     private void updateCurrentKeyTextField(String keyType) {
         currentKeyTextField.textProperty().setValue(keyType);
-        logger.log(Level.INFO, "Updated currentKeyTextField with value: " + keyType);
+        logger.info("Updated currentKeyTextField with value: " + keyType);
     }
 
     @FXML
@@ -266,7 +260,7 @@ public class ViewController {
             } else if (currentlyActiveHBox.equals(volumeDownHBox)) {
                 this.volumeDownKeyCode = pressedKeyCode;
             }
-            logger.log(Level.INFO, "Assigned: " + keyType + " as "
+            logger.info("Assigned: " + keyType + " as "
                     + currentlyActiveHBox.getId().replace("HBox", "") + " key.");
         }
 
@@ -290,7 +284,7 @@ public class ViewController {
         config.setVolumeDownKey(volumeDownKeyCode);
         config.setVolumeDownKeyCombinationActivated(volumeDownCheckBox.isSelected());
 
-        logger.log(Level.INFO, "Config updated");
+        logger.info("Config updated");
 
         SaveConfig.saveConfigToFile(config);
     }

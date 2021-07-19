@@ -2,10 +2,8 @@ package hotkey;
 
 import com.sun.jna.Native;
 import com.sun.jna.WString;
-
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class AutoHotkeyLoader {
 
@@ -17,7 +15,7 @@ public class AutoHotkeyLoader {
 
 
     private AutoHotkeyLoader() {
-        logger = Logger.getLogger(getClass().getName());
+        logger = LoggerFactory.getLogger(AutoHotkeyLoader.class);
 
         setLibsPath();
         loadDll();
@@ -26,18 +24,18 @@ public class AutoHotkeyLoader {
 
     private void setLibsPath() {
         System.setProperty("jna.library.path", autohotkeyDir);
-        logger.log(Level.INFO, "Set libs path");
+        logger.info("Set libs path");
     }
 
-    private void loadDll(){
+    private void loadDll() {
         autoHotKeyDll = Native.load("AutoHotkey.dll", AutoHotkeyDll.class);
-        logger.log(Level.INFO, "Loaded autoHotkey.dll");
+        logger.info("Loaded autoHotkey.dll");
     }
 
-    private void loadAhkScript()  {
-        autoHotKeyDll.ahkTextDll(new WString(""),new WString(""),new WString(""));
+    private void loadAhkScript() {
+        autoHotKeyDll.ahkTextDll(new WString(""), new WString(""), new WString(""));
         autoHotKeyDll.addFile(new WString(scriptsDir), 1);
-        logger.log(Level.INFO, "Add script file to program");
+        logger.info("Add script file to program");
     }
 
     public static AutoHotkeyDll getInstance() {

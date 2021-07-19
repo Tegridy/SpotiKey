@@ -3,27 +3,25 @@ package keystroke;
 import lc.kra.system.keyboard.GlobalKeyboardHook;
 import lc.kra.system.keyboard.event.GlobalKeyAdapter;
 import lc.kra.system.keyboard.event.GlobalKeyEvent;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import player.PlayerController;
 import config.Config;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
 
 public class KeystrokeListener extends Thread{
-
-    private static boolean run = true;
+    
     private final Logger logger;
-    PlayerController playerController;
 
     public KeystrokeListener() {
 
-        logger = Logger.getLogger(getClass().getName());
-        playerController = new PlayerController();
+        logger = LoggerFactory.getLogger(KeystrokeListener.class);
+        
+        PlayerController playerController = new PlayerController();
 
         GlobalKeyboardHook keyboardHook = new GlobalKeyboardHook(false); // Use false here to switch to hook instead of raw input
 
-        logger.log(Level.INFO, "Global keyboard hook successfully started");
+        logger.info("Global keyboard hook successfully started");
 
         Config config = Config.getInstance();
 

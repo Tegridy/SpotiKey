@@ -3,17 +3,22 @@ package config;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import java.io.*;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+
 
 public class LoadConfig {
 
     private static Logger logger;
 
     public static void loadConfigFromFile() {
-        logger = Logger.getLogger(LoadConfig.class.getName());
+        logger = LoggerFactory.getLogger(LoadConfig.class);
+
         Config config = Config.getInstance();
 
         File configFile = new File(System.getProperty("user.dir") + "\\configs\\conf.json");
@@ -45,10 +50,10 @@ public class LoadConfig {
                 config.setVolumeUpKeyCombinationActivated(convertToBoolean(json.get("volumeUpKeyCombinationActivated")));
                 config.setVolumeDownKeyCombinationActivated(convertToBoolean(json.get("volumeDownKeyCombinationActivated")));
 
-                logger.log(Level.INFO, "Successfully loaded JSON config file to an object.");
+                logger.info("Successfully loaded JSON config file to an object.");
 
             } catch (IOException | ParseException e) {
-                logger.log(Level.WARNING, e.getMessage());
+                logger.warn(e.getMessage());
                 e.printStackTrace();
             }
         }
