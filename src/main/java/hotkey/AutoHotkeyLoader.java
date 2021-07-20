@@ -1,13 +1,20 @@
 package hotkey;
 
+import com.sun.glass.utils.NativeLibLoader;
 import com.sun.jna.Native;
 import com.sun.jna.WString;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+
+
 public class AutoHotkeyLoader {
 
     private final String userDir = System.getProperty("user.dir");
+    // Prod paths
+    //private final String autohotkeyDir = userDir + "\\app\\libs";
+    //private final String scriptsDir = userDir + "\\app\\scripts\\SpotifyGlobalHotkeys.ahk";
+    // Dev paths
     private final String autohotkeyDir = userDir + "\\libs";
     private final String scriptsDir = userDir + "\\scripts\\SpotifyGlobalHotkeys.ahk";
     private static AutoHotkeyDll autoHotKeyDll;
