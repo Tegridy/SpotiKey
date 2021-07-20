@@ -15,7 +15,7 @@ dependencies {
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.0'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.7.0'
 
-    implementation group: 'net.java.dev.jna', name: 'jna', version: '5.8.0'
+    implementation group: 'net.java.dev.jna', name: 'jna', version: '5.1.0'
     implementation group: 'lc.kra.system', name: 'system-hook', version: '3.8'
     implementation group: 'com.googlecode.json-simple', name: 'json-simple', version: '1.1.1'
     implementation group: 'com.dustinredmond.fxtrayicon', name: 'FXTrayIcon', version: '3.0.0'
