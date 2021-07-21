@@ -10,14 +10,12 @@ import config.Config;
 
 
 public class KeystrokeListener extends Thread{
-    
+
     private final Logger logger;
 
     public KeystrokeListener() {
 
         logger = LoggerFactory.getLogger(KeystrokeListener.class);
-        
-        PlayerController playerController = new PlayerController();
 
         GlobalKeyboardHook keyboardHook = new GlobalKeyboardHook(false); // Use false here to switch to hook instead of raw input
 
@@ -31,15 +29,15 @@ public class KeystrokeListener extends Thread{
             public void keyPressed(GlobalKeyEvent event) {
 
             if (config.playPauseKeysPressed(event) && config.isPlayPauseKeyCombinationActivated()){
-                playerController.playPauseSong();
+                PlayerController.playPauseSong();
             } else if (config.nextSongKeysPressed(event) && config.isNextSongKeyCombinationActivated()) {
-                playerController.skipToNextSong();
+                PlayerController.skipToNextSong();
             } else if (config.previousSongKeysPressed(event) && config.isPreviousSongKeyCombinationActivated()) {
-                playerController.skipToPreviousSong();
+                PlayerController.skipToPreviousSong();
             } else if (config.volumeUpKeysPressed(event) && config.isVolumeUpKeyCombinationActivated()) {
-                playerController.volumeUp();
+                PlayerController.volumeUp();
             } else if (config.volumeDownKeysPressed(event) && config.isVolumeDownKeyCombinationActivated()) {
-                playerController.volumeDown();
+                PlayerController.volumeDown();
             }
             }
 

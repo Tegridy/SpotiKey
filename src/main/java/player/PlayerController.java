@@ -6,29 +6,29 @@ import hotkey.AutoHotkeyLoader;
 
 public class PlayerController {
 
-    private final AutoHotkeyDll autoHotkeyDll;
+    private static final AutoHotkeyDll autoHotkeyDll;
 
-    public PlayerController() {
-        this.autoHotkeyDll = AutoHotkeyLoader.getInstance();
+    static {
+        autoHotkeyDll = AutoHotkeyLoader.getInstance();
     }
 
-    public void playPauseSong() {
-        this.autoHotkeyDll.ahkFunction(new WString("jplaypause"));
+    public static void playPauseSong() {
+        autoHotkeyDll.ahkFunction(new WString("jplaypause"));
     }
 
-    public void skipToNextSong() {
-        this.autoHotkeyDll.ahkFunction(new WString("jnext"));
+    public static void skipToNextSong() {
+        autoHotkeyDll.ahkFunction(new WString("jnext"));
     }
 
-    public void skipToPreviousSong() {
-        this.autoHotkeyDll.ahkFunction(new WString("jprev"));
+    public static void skipToPreviousSong() {
+        autoHotkeyDll.ahkFunction(new WString("jprev"));
     }
 
-    public void volumeUp() {
-        this.autoHotkeyDll.ahkFunction(new WString("jvolumeup"));
+    public static void volumeUp() {
+        autoHotkeyDll.ahkFunction(new WString("jvolumeup"));
     }
 
-    public void volumeDown() {
-        this.autoHotkeyDll.ahkFunction(new WString("jvolumedown"));
+    public static void volumeDown() {
+        autoHotkeyDll.ahkFunction(new WString("jvolumedown"));
     }
 }

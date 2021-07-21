@@ -267,6 +267,8 @@ public class ViewController {
         updateCurrentKeyTextField(keyType);
     }
 
+
+
     @FXML
     private void saveConfig() {
         config.setControlMustBePressed(this.controlCheckBox.isSelected());

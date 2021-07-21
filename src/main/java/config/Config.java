@@ -8,7 +8,7 @@ public class Config {
 
     private static Config instance;
 
-   private Logger logger;
+    private Logger logger;
 
     boolean controlMustBePressed;
     boolean altMustBePressed;
@@ -27,7 +27,7 @@ public class Config {
     boolean volumeDownKeyCombinationActivated;
 
     private Config() {
-       logger = LoggerFactory.getLogger(Config.class);
+        logger = LoggerFactory.getLogger(Config.class);
 
         this.controlMustBePressed = true;
         this.altMustBePressed = false;
