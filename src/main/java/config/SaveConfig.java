@@ -38,7 +38,7 @@ public class SaveConfig {
 
         userConfig.put("config", configProperties);
 
-        File configFile = new File(System.getProperty("user.dir") + "\\configs\\conf.json");
+        File configFile = new File(System.getProperty("user.dir") + "\\app\\configs\\conf.json");
 
         try (FileWriter file = new FileWriter(configFile)) {
 

@@ -21,7 +21,7 @@ public class LoadConfig {
 
         Config config = Config.getInstance();
 
-        File configFile = new File(System.getProperty("user.dir") + "\\configs\\conf.json");
+        File configFile = new File(System.getProperty("user.dir") + "\\app\\configs\\conf.json");
 
         if (configFile.length() > 1) {
 
