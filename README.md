@@ -11,5 +11,5 @@ SpotiKey adds global hotkeys to Spotify.
 
 # Requirements
 
-- Windows 10 64bit (7, 8/8.1 - not tested)
+- Windows (7, 10, 11) 64bit
 - Spotify
