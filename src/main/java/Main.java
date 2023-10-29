@@ -4,12 +4,15 @@ import javafx.stage.Stage;
 import keystroke.KeystrokeListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import view.ViewController;
+import view.SettingsControllerView;
+import view.ToastView;
+
 import java.io.FileNotFoundException;
 
 public class Main extends Application {
 
-    private ViewController viewController;
+    private SettingsControllerView viewController;
+    private ToastView toastView;
     private Logger logger;
 
     @Override
@@ -20,7 +23,9 @@ public class Main extends Application {
             Thread t1 = new Thread(new KeystrokeListener());
             t1.start();
 
-            viewController = new ViewController();
+            viewController = new SettingsControllerView();
+            toastView = new ToastView();
+
         } catch (Throwable e) {
             logger.warn("Can't start app: " + e.getMessage());
             e.printStackTrace();
