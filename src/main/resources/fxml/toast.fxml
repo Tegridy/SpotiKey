@@ -3,13 +3,23 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.image.*?>
 <?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
 
-<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1">
+<AnchorPane id="toastView" maxHeight="48.0" maxWidth="250.0" prefHeight="48.0" prefWidth="250.0" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1">
    <children>
-      <Button id="nextSongButton" layoutX="375.0" layoutY="229.0" mnemonicParsing="false" text="Next" />
-      <Button id="previousSongButton" layoutX="248.0" layoutY="229.0" mnemonicParsing="false" text="Prev" />
-      <Button id="playPauseButton" layoutX="314.0" layoutY="229.0" mnemonicParsing="false" text="Pause" />
-      <ImageView id="trackCoverView" fitHeight="150.0" fitWidth="200.0" layoutX="21.0" layoutY="92.0" pickOnBounds="true" preserveRatio="true" />
-      <ProgressBar id="songProgressBar" layoutX="261.0" layoutY="149.0" prefWidth="200.0" progress="0.0" />
+      <Button id="nextSongButton" layoutX="215.0" layoutY="4.0" mnemonicParsing="false" text="Next">
+         <font>
+            <Font size="6.0" />
+         </font></Button>
+      <Button id="previousSongButton" layoutX="105.0" layoutY="2.0" mnemonicParsing="false" prefHeight="14.0" prefWidth="33.0" text="Prev">
+         <font>
+            <Font size="6.0" />
+         </font></Button>
+      <Button id="playPauseButton" layoutX="160.0" layoutY="4.0" mnemonicParsing="false" text="Pause">
+         <font>
+            <Font size="6.0" />
+         </font></Button>
+      <ImageView id="trackCoverView" fitHeight="35.0" fitWidth="41.0" layoutX="21.0" layoutY="11.0" pickOnBounds="true" preserveRatio="true" />
+      <ProgressBar id="songProgressBar" layoutX="101.0" layoutY="20.0" prefHeight="18.0" prefWidth="143.0" progress="0.0" />
    </children>
 </AnchorPane>
