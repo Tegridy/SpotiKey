@@ -9,6 +9,7 @@ version '1.0'
 
 repositories {
     mavenCentral()
+    maven { url 'https://jitpack.io' }
 }
 
 dependencies {
@@ -22,6 +23,7 @@ dependencies {
     implementation group: 'com.dustinredmond.fxtrayicon', name: 'FXTrayIcon', version: '3.0.0'
     implementation group: 'org.slf4j', name: 'slf4j-api', version: '1.7.31'
     implementation group: 'org.slf4j', name: 'slf4j-simple', version: '1.7.31'
+    implementation 'com.github.LabyStudio:java-spotify-api:+:all'
 }
 
 javafx {
