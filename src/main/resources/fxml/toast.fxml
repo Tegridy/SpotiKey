@@ -20,6 +20,6 @@
             <Font size="6.0" />
          </font></Button>
       <ImageView id="trackCoverView" fitHeight="35.0" fitWidth="41.0" layoutX="21.0" layoutY="11.0" pickOnBounds="true" preserveRatio="true" />
-      <ProgressBar id="songProgressBar" layoutX="101.0" layoutY="20.0" prefHeight="18.0" prefWidth="143.0" progress="0.0" />
+      <ProgressBar fx:id="songProgressBar" layoutX="101.0" layoutY="20.0" prefHeight="18.0" prefWidth="143.0" progress="0.0" />
    </children>
 </AnchorPane>

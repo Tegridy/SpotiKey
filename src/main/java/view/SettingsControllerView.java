@@ -37,36 +37,36 @@ public class SettingsControllerView {
     private Config config;
 
     @FXML
-    CheckBox controlCheckBox;
+    private CheckBox controlCheckBox;
     @FXML
-    CheckBox altCheckBox;
+    private CheckBox altCheckBox;
     @FXML
-    CheckBox shiftCheckBox;
+    private CheckBox shiftCheckBox;
     @FXML
-    CheckBox playPauseCheckBox;
+    private CheckBox playPauseCheckBox;
     @FXML
-    CheckBox nextSongCheckBox;
+    private CheckBox nextSongCheckBox;
     @FXML
-    CheckBox previousSongCheckBox;
+    private CheckBox previousSongCheckBox;
     @FXML
-    CheckBox volumeUpCheckBox;
+    private CheckBox volumeUpCheckBox;
     @FXML
-    CheckBox volumeDownCheckBox;
+    private CheckBox volumeDownCheckBox;
     @FXML
-    TextField currentKeyTextField;
+    private TextField currentKeyTextField;
 
-    HBox currentlyActiveHBox;
+    private HBox currentlyActiveHBox;
 
     @FXML
-    HBox playPauseHBox;
+    private HBox playPauseHBox;
     @FXML
-    HBox nextSongHBox;
+    private HBox nextSongHBox;
     @FXML
-    HBox previousSongHBox;
+    private HBox previousSongHBox;
     @FXML
-    HBox volumeUpHBox;
+    private HBox volumeUpHBox;
     @FXML
-    HBox volumeDownHBox;
+    private HBox volumeDownHBox;
 
     private final ArrayList<HBox> hBoxes;
 
@@ -77,11 +77,11 @@ public class SettingsControllerView {
     private int volumeDownKeyCode;
 
     @FXML
-    Hyperlink githubUrl;
+    private Hyperlink githubUrl;
     @FXML
-    Hyperlink iconAuthorUrl;
+    private Hyperlink iconAuthorUrl;
     @FXML
-    Hyperlink flaticonUrl;
+    private Hyperlink flaticonUrl;
 
     public SettingsControllerView() {
         stage = new Stage();
@@ -91,9 +91,7 @@ public class SettingsControllerView {
 
         try {
             LoadConfig.loadConfigFromFile();
-
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/scene.fxml"));
-
             loader.setController(this);
 
             stage.getIcons().add(

@@ -28,7 +28,7 @@ public class AutoHotkeyLoader {
     }
 
     private void loadDll() {
-        autoHotKeyDll = Native.load("AutoHotkey.dll", AutoHotkeyDll.class);
+        autoHotKeyDll = Native.loadLibrary("AutoHotkey.dll", AutoHotkeyDll.class);
         logger.info("Loaded autoHotkey.dll");
     }
 
