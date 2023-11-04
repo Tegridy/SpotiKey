@@ -1,7 +1,5 @@
 package view;
 
-import com.sun.jna.platform.win32.User32;
-import com.sun.jna.platform.win32.WinDef;
 import de.labystudio.spotifyapi.SpotifyAPI;
 import de.labystudio.spotifyapi.SpotifyAPIFactory;
 import de.labystudio.spotifyapi.SpotifyListener;
@@ -14,6 +12,9 @@ import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import utils.ScreenCoordinates;
+import utils.ScreenPosition;
+import utils.ToastPosition;
 
 
 public class ToastView {
@@ -98,29 +99,13 @@ public class ToastView {
     }
 
     private void findPlaceForToast() {
-        User32 user32 = User32.INSTANCE;
 
-        System.out.println(user32);
+        // Switch depending on chosen checkbox
 
-        WinDef.HWND taskbarHWND = user32.FindWindow("Shell_TrayWnd", null);
+        ScreenCoordinates screenCoordinates = ToastPosition.getPositionOnScreen(ScreenPosition.TASKBAR_END);
 
-        WinDef.HWND trayNotifyHWND = user32.FindWindowEx(taskbarHWND, null, "TrayNotifyWnd", null);
-        System.out.println(trayNotifyHWND);
-        WinDef.RECT bounds = new WinDef.RECT();
-        bounds.write();
-
-        System.out.println(user32.GetWindowRect(trayNotifyHWND, bounds));
-        bounds.read();
-        int trayNotifyWidth = bounds.toRectangle().width;
-        int trayNotifyHeight = bounds.toRectangle().height;
-        int screenWidth = bounds.left;
-        int screenHeight = bounds.bottom;
-
-        double posX = screenWidth - trayNotifyWidth;
-        double posY = screenHeight - trayNotifyHeight;
-
-        stage.setX(posX);
-        stage.setY(posY);
+        stage.setX(screenCoordinates.x());
+        stage.setY(screenCoordinates.y());
     }
 
     private void getCurrentSongPositionAndUpdateProgressBar(int position) {
