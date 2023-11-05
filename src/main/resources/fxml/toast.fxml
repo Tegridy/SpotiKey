@@ -7,11 +7,11 @@
 
 <AnchorPane id="toastView" maxHeight="48.0" maxWidth="250.0" prefHeight="48.0" prefWidth="250.0" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1">
    <children>
-      <Button id="nextSongButton" layoutX="215.0" layoutY="4.0" mnemonicParsing="false" text="Next">
+      <Button id="nextSongButton" fx:id="nextSongButton" layoutX="215.0" layoutY="4.0" mnemonicParsing="false" text="Next">
          <font>
             <Font size="6.0" />
          </font></Button>
-      <Button id="previousSongButton" layoutX="105.0" layoutY="2.0" mnemonicParsing="false" prefHeight="14.0" prefWidth="33.0" text="Prev">
+      <Button id="previousSongButton" fx:id="previousSongButton" layoutX="105.0" layoutY="2.0" mnemonicParsing="false" prefHeight="14.0" prefWidth="33.0" text="Prev">
          <font>
             <Font size="6.0" />
          </font></Button>

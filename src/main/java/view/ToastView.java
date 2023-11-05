@@ -46,6 +46,12 @@ public class ToastView {
     @FXML
     private Button playPauseButton;
 
+    @FXML
+    private Button nextSongButton;
+
+    @FXML
+    private Button previousSongButton;
+
     public ToastView() {
         stage = new Stage();
         spotifyAPI = SpotifyAPIFactory.create();
@@ -71,8 +77,7 @@ public class ToastView {
 
             stage.show();
 
-            playPauseButton.setOnAction(event);
-
+            addEventsToToastButtons();
 
             initSpotifyAPI();
 
@@ -80,6 +85,12 @@ public class ToastView {
         } catch (Throwable e) {
             logger.warn("Exception during initializing view: " + e.getMessage());
         }
+    }
+
+    private void addEventsToToastButtons() {
+        playPauseButton.setOnAction(playPauseEvent);
+        nextSongButton.setOnAction(nextSongEvent);
+        previousSongButton.setOnAction(previousSongEvent);
     }
 
     private void initSpotifyAPI() {
@@ -160,14 +171,7 @@ public class ToastView {
         logger.debug(String.format("Position changed: %s of %s (%d%%)\n", position, length, (int) currentProgress));
     }
 
-    private void playPauseButtonClicked() {
-        PlayerController.playPauseSong();
-    }
-
-    EventHandler<ActionEvent> event = new EventHandler<ActionEvent>() {
-        public void handle(ActionEvent e)
-        {
-            playPauseButtonClicked();
-        }
-    };
+    private final EventHandler<ActionEvent> playPauseEvent = e -> PlayerController.playPauseSong();
+    private final EventHandler<ActionEvent> nextSongEvent = e -> PlayerController.skipToNextSong();
+    private final EventHandler<ActionEvent> previousSongEvent = e -> PlayerController.skipToPreviousSong();
 }
