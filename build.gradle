@@ -27,11 +27,12 @@ dependencies {
     implementation group: 'org.slf4j', name: 'slf4j-api', version: '1.7.31'
     implementation group: 'org.slf4j', name: 'slf4j-simple', version: '1.7.31'
     //implementation 'com.github.LabyStudio:java-spotify-api:+:all'
+    implementation group: 'org.openjfx', name: 'javafx-swing', version: '22-ea+16'
 }
 
 javafx {
     version = "16"
-    modules = [ 'javafx.controls', 'javafx.fxml' ]
+    modules = [ 'javafx.controls', 'javafx.fxml', 'javafx.swing' ]
 }
 
 test {

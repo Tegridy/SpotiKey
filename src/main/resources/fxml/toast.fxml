@@ -15,11 +15,14 @@
          <font>
             <Font size="6.0" />
          </font></Button>
-      <Button id="playPauseButton" layoutX="160.0" layoutY="4.0" mnemonicParsing="false" text="Pause">
+      <Button id="playPauseButton" fx:id="playPauseButton" layoutX="160.0" layoutY="4.0" mnemonicParsing="false" text="Pause">
          <font>
             <Font size="6.0" />
          </font></Button>
-      <ImageView id="trackCoverView" fitHeight="35.0" fitWidth="41.0" layoutX="21.0" layoutY="11.0" pickOnBounds="true" preserveRatio="true" />
+      <ImageView fx:id="trackCoverView" fitHeight="35.0" fitWidth="41.0" layoutX="21.0" layoutY="11.0" pickOnBounds="true" preserveRatio="true">
+         <fitWidth>100</fitWidth>
+         <preserveRatio>true</preserveRatio>
+      </ImageView>
       <ProgressBar fx:id="songProgressBar" layoutX="101.0" layoutY="20.0" prefHeight="18.0" prefWidth="143.0" progress="0.0" />
    </children>
 </AnchorPane>
