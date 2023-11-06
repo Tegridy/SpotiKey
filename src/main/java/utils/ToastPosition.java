@@ -3,6 +3,11 @@ package utils;
 import com.sun.jna.platform.win32.User32;
 import com.sun.jna.platform.win32.WinDef;
 
+import com.sun.jna.Pointer;
+import com.sun.jna.platform.win32.WinDef.HWND;
+import hotkey.AutoHotkeyLoader;
+
+
 public class ToastPosition {
 
     public static final int TOAST_WIDTH = 250;
@@ -16,6 +21,8 @@ public class ToastPosition {
 
         double posX = 0;
         double posY = screenHeight - trayNotifyHeight;
+
+        AutoHotkeyLoader.loadTaskbarToastOnTopScript();
 
         return new ScreenCoordinates(posX, posY);
     }
@@ -31,6 +38,8 @@ public class ToastPosition {
 
         double posX = screenWidth - trayNotifyWidth - 25;
         double posY = screenHeight - trayNotifyHeight;
+
+        AutoHotkeyLoader.loadTaskbarToastOnTopScript();
 
         return new ScreenCoordinates(posX, posY);
     }
@@ -60,6 +69,8 @@ public class ToastPosition {
 
         return new ScreenCoordinates(posX, posY);
     }
+
+    static HWND HWND_TOPMOST=new HWND(Pointer.createConstant(-1));
 
     private static WinDef.RECT getBounds() {
         User32 user32 = User32.INSTANCE;

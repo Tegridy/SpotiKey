@@ -5,7 +5,7 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
-<AnchorPane id="toastView" maxHeight="48.0" maxWidth="250.0" prefHeight="48.0" prefWidth="250.0" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1">
+<AnchorPane id="toast-background" maxHeight="48.0" maxWidth="250.0" prefHeight="48.0" prefWidth="250.0" stylesheets="@../styles/toast-styles.css" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1">
    <children>
       <Button id="nextSongButton" fx:id="nextSongButton" layoutX="215.0" layoutY="4.0" mnemonicParsing="false" text="Next">
          <font>
