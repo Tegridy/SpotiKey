@@ -35,18 +35,7 @@ public class AutoHotkeyLoader {
     private void loadAhkScript() {
         autoHotKeyDll.ahkTextDll(new WString(""), new WString(""), new WString(""));
         autoHotKeyDll.addFile(new WString(scriptsDir), 1);
-        logger.debug("Add script file to program");
-    }
-
-    public static void loadTaskbarToastOnTopScript() {
-
-        if (getInstance() != null) {
-            autoHotKeyDll.ahkTextDll(new WString(""), new WString(""), new WString(""));
-            autoHotKeyDll.addFile(new WString(userDir + "\\app\\scripts\\ToastOnTopScript.ahk"), 1);
-        } else {
-            getInstance();
-            loadTaskbarToastOnTopScript();
-        }
+        logger.debug("Add spotify hotkeys script file to program");
     }
 
     public static AutoHotkeyDll getInstance() {

@@ -18,8 +18,6 @@ import java.io.FileNotFoundException;
 
 public class Main extends Application {
 
-    private SettingsControllerView viewController;
-    private ToastView toastView;
     private Logger logger;
 
     @Override
@@ -30,8 +28,8 @@ public class Main extends Application {
             Thread t1 = new Thread(new KeystrokeListener());
             t1.start();
 
-            viewController = new SettingsControllerView();
-            toastView = new ToastView();
+            SettingsControllerView viewController = new SettingsControllerView();
+            ToastView toastView = new ToastView();
 
         } catch (Throwable e) {
             logger.warn("Can't start app: " + e.getMessage());
@@ -45,9 +43,8 @@ public class Main extends Application {
             super.stop();
             Platform.exit();
             System.exit(0);
-        } catch (Exception e) {
-            logger.warn("Error while closing app: " + e.getMessage());
-            e.printStackTrace();
+        } catch (Exception ex) {
+            logger.warn("Error while closing app: " + ex.getMessage());
         }
     }
 }

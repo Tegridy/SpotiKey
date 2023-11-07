@@ -22,8 +22,6 @@ public class ToastPosition {
         double posX = 0;
         double posY = screenHeight - trayNotifyHeight;
 
-        AutoHotkeyLoader.loadTaskbarToastOnTopScript();
-
         return new ScreenCoordinates(posX, posY);
     }
 
@@ -38,8 +36,6 @@ public class ToastPosition {
 
         double posX = screenWidth - trayNotifyWidth - 25;
         double posY = screenHeight - trayNotifyHeight;
-
-        AutoHotkeyLoader.loadTaskbarToastOnTopScript();
 
         return new ScreenCoordinates(posX, posY);
     }

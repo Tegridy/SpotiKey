@@ -1,16 +1,12 @@
 package view;
 
-import com.sun.jna.Native;
-import com.sun.jna.Pointer;
-import com.sun.jna.platform.win32.User32;
-import com.sun.jna.platform.win32.WinDef;
-import com.sun.jna.platform.win32.WinUser;
-import com.sun.jna.ptr.PointerByReference;
 import de.labystudio.spotifyapi.SpotifyAPI;
 import de.labystudio.spotifyapi.SpotifyAPIFactory;
 import de.labystudio.spotifyapi.SpotifyListener;
 import de.labystudio.spotifyapi.model.Track;
 import de.labystudio.spotifyapi.open.OpenSpotifyAPI;
+import javafx.animation.FadeTransition;
+import javafx.animation.Transition;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -18,16 +14,16 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
-import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
 
+import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
+import javafx.util.Duration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import player.PlayerController;
@@ -35,14 +31,9 @@ import utils.ScreenCoordinates;
 import utils.ScreenPosition;
 import utils.ToastPosition;
 
-import com.sun.jna.platform.win32.WinUser;
-
 
 import java.awt.image.BufferedImage;
 import java.io.IOException;
-import java.util.Timer;
-
-import static com.sun.jna.platform.win32.WinUser.*;
 
 
 public class ToastView {
@@ -51,7 +42,11 @@ public class ToastView {
     private final Logger logger;
     private final SpotifyAPI spotifyAPI;
     private final OpenSpotifyAPI openSpotifyAPI;
-
+    private PlayerController playerController;
+    private Image playImage;
+    private Image pauseImage;
+    private FadeTransition fadeTransition;
+    private static boolean isPlaying;
 
     @FXML
     private ProgressBar songProgressBar;
@@ -68,14 +63,26 @@ public class ToastView {
     @FXML
     private Button previousSongButton;
 
+    @FXML
+    private ImageView playPauseImageView;
+
+    @FXML private TextField songTitleTextField;
+
     public ToastView() {
         stage = new Stage();
         spotifyAPI = SpotifyAPIFactory.create();
         openSpotifyAPI = new OpenSpotifyAPI();
+        playerController = PlayerController.getInstance();
 
         logger = LoggerFactory.getLogger(ToastView.class);
 
         try {
+            playImage = new Image(getClass().getResourceAsStream("../icon/play.png"));
+            pauseImage = new Image(getClass().getResourceAsStream("../icon/pause-circle.png"));
+
+            fadeTransition = new FadeTransition(Duration.millis(1300), trackCoverView);
+            fadeTransition.setFromValue(0.1);
+            fadeTransition.setToValue(1);
 
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/toast.fxml"));
             loader.setController(this);
@@ -95,6 +102,7 @@ public class ToastView {
             choosePlaceForToast();
 
             addEventsToToastButtons();
+
         } catch (Throwable e) {
             logger.warn("Exception during initializing view: " + e.getMessage());
         }
@@ -110,6 +118,8 @@ public class ToastView {
         spotifyAPI.registerListener(new SpotifyListener() {
             @Override
             public void onConnect() {
+                isPlaying = spotifyAPI.isPlaying();
+                setPlaying(isPlaying);
                 logger.debug("Connected to Spotify!");
             }
 
@@ -117,6 +127,7 @@ public class ToastView {
             public void onTrackChanged(Track track) {
                 logger.debug(String.format("Track changed: %s (%s)\n", track, track.getLength()));
                 fetchAndSetCurrentTrackImage();
+                fetchAndSetCurrentSongTitle();
             }
 
             @Override
@@ -131,22 +142,26 @@ public class ToastView {
 
             @Override
             public void onSync() {
-
             }
 
             @Override
             public void onDisconnect(Exception exception) {
                 logger.debug("Disconnected: " + exception.getMessage());
+
+                // TODO Disable toast
+
                 spotifyAPI.stop();
             }
         });
 
         spotifyAPI.initialize();
+        changePlayPauseIcon(isPlaying);
+        fetchAndSetCurrentSongTitle();
     }
 
     private void choosePlaceForToast() {
 
-        // Switch depending on chosen checkbox
+        // TODO Switch depending on chosen checkbox
 
         ScreenCoordinates screenCoordinates = ToastPosition.getPositionOnScreen(ScreenPosition.TASKBAR_START);
 
@@ -163,6 +178,9 @@ public class ToastView {
                 BufferedImage imageTrackCover = openSpotifyAPI.requestImage(track);
                 Image image = SwingFXUtils.toFXImage(imageTrackCover, null);
                 trackCoverView.setImage(image);
+                fadeTransition.setNode(trackCoverView);
+                fadeTransition.setCycleCount(1);
+                fadeTransition.play();
             } else {
                 logger.info("Track is not loaded yet. Try to unpause song.");
             }
@@ -171,10 +189,19 @@ public class ToastView {
         }
     }
 
+    private void fetchAndSetCurrentSongTitle() {
+
+        if (spotifyAPI.hasTrack()) {
+            Track track = spotifyAPI.getTrack();
+            String songTitle = track.getName();
+            songTitleTextField.setText(songTitle);
+        } else {
+            logger.info("Track is not loaded yet. Try to unpause song.");
+        }
+    }
     private void getCurrentSongPositionAndUpdateProgressBar(int position) {
 
         if (!spotifyAPI.hasTrack()) {
-            System.out.println("returned");
             return;
         }
 
@@ -186,8 +213,32 @@ public class ToastView {
         // logger.debug(String.format("Position changed: %s of %s (%d%%)\n", position, length, (int) currentProgress));
     }
 
-    private final EventHandler<ActionEvent> playPauseEvent = event -> PlayerController.playPauseSong();
-    private final EventHandler<ActionEvent> nextSongEvent = event -> PlayerController.skipToNextSong();
-    private final EventHandler<ActionEvent> previousSongEvent = event -> PlayerController.skipToPreviousSong();
+    private final EventHandler<ActionEvent> playPauseEvent = event -> {
+        isPlaying = !isPlaying;
+        changePlayPauseIcon(isPlaying);
+        playerController.playPauseSong();
+    };
+    private final EventHandler<ActionEvent> nextSongEvent = event -> playerController.skipToNextSong();
+    private final EventHandler<ActionEvent> previousSongEvent = event -> playerController.skipToPreviousSong();
+
+
+
+    private void changePlayPauseIcon(boolean isPlaying) {
+
+        if (isPlaying) {
+            playPauseImageView.setImage(playImage);
+        } else {
+            playPauseImageView.setImage(pauseImage);
+        }
+        playPauseButton.setGraphic(playPauseImageView);
+    }
+
+    public void setPlaying(boolean playing) {
+        isPlaying = playing;
+    }
+
+    public static boolean isPlaying() {
+        return isPlaying;
+    }
 }
 
