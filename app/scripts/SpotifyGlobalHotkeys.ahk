@@ -18,17 +18,15 @@
 
                     ; https://gist.github.com/jcsteh/7ccbc6f7b1b7eb85c1c14ac5e0d65195
 
-                    ; Keep toast always on top function
+                     #SingleInstance
+                     #NoTrayIcon
 
-                    #SingleInstance
-                    #NoTrayIcon
+                     settimer, showlbl, 5
 
-                    settimer, showlbl, 1
-
-                    showlbl:
-                    WinGet, hwnd, ID, SpotiKeyToast
-                    WinSet, AlwaysOnTop, On, ahk_id %hwnd%
-                    return
+                     showlbl:
+                     WinGet, hwnd, ID, SpotiKeyToast
+                     WinSet, AlwaysOnTop, On, ahk_id %hwnd%
+                     return
 
                     ; Get the HWND of the Spotify main window.
                     getSpotifyHwnd() {

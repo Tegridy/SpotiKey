@@ -1,18 +1,12 @@
-import com.sun.jna.Native;
-import com.sun.jna.Pointer;
-import com.sun.jna.platform.win32.User32;
-import com.sun.jna.platform.win32.WinDef;
 import javafx.application.Application;
 import javafx.application.Platform;
-import javafx.scene.Scene;
-import javafx.scene.control.Label;
-import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 import keystroke.KeystrokeListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import view.SettingsControllerView;
-import view.ToastView;
+import player.PlayerController;
+import view.SettingsController;
+import view.ToastController;
 
 import java.io.FileNotFoundException;
 
@@ -28,8 +22,9 @@ public class Main extends Application {
             Thread t1 = new Thread(new KeystrokeListener());
             t1.start();
 
-            SettingsControllerView viewController = new SettingsControllerView();
-            ToastView toastView = new ToastView();
+            SettingsController viewController = new SettingsController();
+            ToastController toastController = new ToastController();
+            PlayerController.getInstance().addIsPlayingListener(toastController);
 
         } catch (Throwable e) {
             logger.warn("Can't start app: " + e.getMessage());

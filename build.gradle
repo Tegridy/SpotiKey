@@ -15,7 +15,7 @@ repositories {
 }
 
 dependencies {
-    implementation files('libs/java-spotify-api.jar')
+    //implementation files('libs/java-spotify-api.jar')
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.0'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.7.0'
 
@@ -26,7 +26,7 @@ dependencies {
     implementation group: 'com.dustinredmond.fxtrayicon', name: 'FXTrayIcon', version: '3.0.0'
     implementation group: 'org.slf4j', name: 'slf4j-api', version: '1.7.31'
     implementation group: 'org.slf4j', name: 'slf4j-simple', version: '1.7.31'
-    //implementation 'com.github.LabyStudio:java-spotify-api:+:all'
+    implementation 'com.github.LabyStudio:java-spotify-api:+:all'
     implementation group: 'org.openjfx', name: 'javafx-swing', version: '22-ea+16'
 }
 

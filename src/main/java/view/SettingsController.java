@@ -30,7 +30,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Objects;
 
-public class SettingsControllerView {
+public class SettingsController {
 
     private final Stage stage;
     private final Logger logger;
@@ -83,9 +83,9 @@ public class SettingsControllerView {
     @FXML
     private Hyperlink flaticonUrl;
 
-    public SettingsControllerView() {
+    public SettingsController() {
         stage = new Stage();
-        logger = LoggerFactory.getLogger(SettingsControllerView.class);
+        logger = LoggerFactory.getLogger(SettingsController.class);
         config = Config.getInstance();
         currentlyActiveHBox = null;
 

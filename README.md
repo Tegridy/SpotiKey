@@ -5,7 +5,7 @@ SpotiKey adds global hotkeys to Spotify.
 
 # Features
 
-- Player controller (play, pause, next, previous, volume up/down)
+- Player view (play, pause, next, previous, volume up/down)
 - Allows to change keybindings
 - Starts with Windows
 
