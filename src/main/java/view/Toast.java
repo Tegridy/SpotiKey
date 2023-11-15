@@ -6,8 +6,6 @@ import de.labystudio.spotifyapi.SpotifyListener;
 import de.labystudio.spotifyapi.model.Track;
 import de.labystudio.spotifyapi.open.OpenSpotifyAPI;
 import javafx.animation.FadeTransition;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -35,14 +33,13 @@ import utils.ToastPosition;
 
 import java.awt.image.BufferedImage;
 import java.io.IOException;
-import java.time.LocalDateTime;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
 
-public class ToastController implements ChangeListener<Boolean> {
+public class Toast {
 
     private final Stage stage;
     private final Logger logger;
@@ -52,6 +49,7 @@ public class ToastController implements ChangeListener<Boolean> {
     private Image pauseImage;
     private FadeTransition fadeTransition;
     private PlayerController playerControllerInstance;
+
     @FXML
     private ProgressBar songProgressBar;
 
@@ -70,15 +68,16 @@ public class ToastController implements ChangeListener<Boolean> {
     @FXML
     private ImageView playPauseImageView;
 
-    @FXML private TextField songTitleTextField;
+    @FXML
+    private TextField songTitleTextField;
 
-    public ToastController() {
+    public Toast() {
         stage = new Stage();
         spotifyAPI = SpotifyAPIFactory.create();
         openSpotifyAPI = new OpenSpotifyAPI();
         playerControllerInstance = PlayerController.getInstance();
 
-        logger = LoggerFactory.getLogger(ToastController.class);
+        logger = LoggerFactory.getLogger(Toast.class);
 
         try {
             playImage = new Image(getClass().getResourceAsStream("../icon/play.png"));
@@ -113,22 +112,34 @@ public class ToastController implements ChangeListener<Boolean> {
     }
 
     private void addEventsToToastButtons() {
+
         playPauseButton.setOnAction(playPauseEvent);
         nextSongButton.setOnAction(nextSongEvent);
         previousSongButton.setOnAction(previousSongEvent);
     }
 
     long posUpdated;
+
     private void initSpotifyAPI() {
+
         spotifyAPI.registerListener(new SpotifyListener() {
             @Override
             public void onConnect() {
-                playerControllerInstance.setIsPlaying(spotifyAPI.isPlaying());
                 logger.debug("Connected to Spotify!");
+
+                try {
+                    // Sleep for 1s and let api properly connect
+                    Thread.sleep(1000);
+                    // Play/Pause song and trigger data read from Spotify client
+                    playerControllerInstance.playPauseSong();
+                } catch (InterruptedException ex) {
+                    logger.warn("Spotify initial data read interrupted: " + ex.getMessage());
+                }
             }
 
             @Override
             public void onTrackChanged(Track track) {
+
                 logger.debug(String.format("Track changed: %s (%s)\n", track, track.getLength()));
                 fetchAndSetCurrentTrackImage();
                 fetchAndSetCurrentSongTitle();
@@ -137,10 +148,6 @@ public class ToastController implements ChangeListener<Boolean> {
             @Override
             public void onPositionChanged(int position) {
 
-                playerControllerInstance.setIsPlaying(!playerControllerInstance.isPlaying());
-                playerControllerInstance.setCurrentPosition(position);
-                posUpdated = System.currentTimeMillis();
-
                 stopUpdatingProgressBar();
                 startUpdatingProgressBar();
             }
@@ -148,15 +155,11 @@ public class ToastController implements ChangeListener<Boolean> {
             @Override
             public void onPlayBackChanged(boolean isPlaying) {
                 logger.debug(isPlaying ? "Song started playing" : "Song stopped playing");
+                changePlayPauseIcon(isPlaying);
             }
 
             @Override
             public void onSync() {
-                boolean is = spotifyAPI.isPlaying();
-                playerControllerInstance.setIsPlaying(is);
-                if (!is) {
-                    stopUpdatingProgressBar();
-                }
             }
 
             @Override
@@ -180,7 +183,6 @@ public class ToastController implements ChangeListener<Boolean> {
 
         stage.setX(screenCoordinates.x());
         stage.setY(screenCoordinates.y());
-
     }
 
     private void fetchAndSetCurrentTrackImage() {
@@ -212,41 +214,37 @@ public class ToastController implements ChangeListener<Boolean> {
             logger.info("Track is not loaded yet. Try to unpause song.");
         }
     }
-    private void getCurrentSongPositionAndUpdateProgressBar(int position) throws InterruptedException {
+
+    private void getCurrentSongPositionAndUpdateProgressBar() throws InterruptedException {
 
         if (!spotifyAPI.hasTrack() || !spotifyAPI.hasPosition()) {
-            PlayerController.getInstance().playPauseSong();
-            PlayerController.getInstance().playPauseSong();
             return;
         }
 
-        long timePassed = System.currentTimeMillis() - posUpdated;
-        long interpolatedPosition = spotifyAPI.getPosition() + timePassed;
-
         int length = spotifyAPI.getTrack().getLength();
-        double currentProgress = 1.0F / length * interpolatedPosition;
+        int currentPosition = spotifyAPI.getPosition();
+
+        double currentProgress = 1.0F / length * currentPosition;
 
         songProgressBar.setProgress(currentProgress);
-        System.out.println(interpolatedPosition + " / " + spotifyAPI.getTrack().getLength());
 
-     //   logger.debug(String.format("Position changed: %s of %s (%d%%)\n", position, length, (int) currentProgress));
+        logger.debug(String.format("Position changed: %s of %s\n", currentPosition, length));
     }
 
-    // Create a ScheduledExecutorService instance
     private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
     private ScheduledFuture<?> updaterHandle;
 
     public void startUpdatingProgressBar() {
-        final Runnable updater = new Runnable() {
-            public void run() {
-                try {
-                    getCurrentSongPositionAndUpdateProgressBar(0);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
+
+        final Runnable updater = () -> {
+            try {
+                getCurrentSongPositionAndUpdateProgressBar();
+            } catch (InterruptedException ex) {
+                logger.warn("Progress bar thread interrupted: " + ex.getMessage());
             }
         };
-        updaterHandle = scheduler.scheduleAtFixedRate(updater, 0, 1, TimeUnit.SECONDS);
+
+        updaterHandle = scheduler.scheduleAtFixedRate(updater, 0, 2, TimeUnit.SECONDS);
     }
 
     public void stopUpdatingProgressBar() {
@@ -262,17 +260,11 @@ public class ToastController implements ChangeListener<Boolean> {
     private void changePlayPauseIcon(boolean isPlaying) {
 
         if (isPlaying) {
-            playPauseImageView.setImage(playImage);
-        } else {
             playPauseImageView.setImage(pauseImage);
+        } else {
+            playPauseImageView.setImage(playImage);
         }
         playPauseButton.setGraphic(playPauseImageView);
-    }
-
-    @Override
-    public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-        logger.debug("Is player playing: " + newValue);
-        changePlayPauseIcon(newValue);
     }
 }
 

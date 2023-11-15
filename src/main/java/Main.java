@@ -4,9 +4,8 @@ import javafx.stage.Stage;
 import keystroke.KeystrokeListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import player.PlayerController;
-import view.SettingsController;
-import view.ToastController;
+import view.Settings;
+import view.Toast;
 
 import java.io.FileNotFoundException;
 
@@ -19,16 +18,14 @@ public class Main extends Application {
         try {
             logger = LoggerFactory.getLogger(Main.class);
 
-            Thread t1 = new Thread(new KeystrokeListener());
-            t1.start();
+            Thread keystrokeListenerThread = new Thread(new KeystrokeListener());
+            keystrokeListenerThread.start();
 
-            SettingsController viewController = new SettingsController();
-            ToastController toastController = new ToastController();
-            PlayerController.getInstance().addIsPlayingListener(toastController);
+            new Settings();
+            new Toast();
 
-        } catch (Throwable e) {
-            logger.warn("Can't start app: " + e.getMessage());
-            e.printStackTrace();
+        } catch (Throwable ex) {
+            logger.warn("Application start failure: " + ex.getMessage());
         }
     }
 
@@ -39,7 +36,7 @@ public class Main extends Application {
             Platform.exit();
             System.exit(0);
         } catch (Exception ex) {
-            logger.warn("Error while closing app: " + ex.getMessage());
+            logger.warn("Error while closing application: " + ex.getMessage());
         }
     }
 }

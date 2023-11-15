@@ -30,7 +30,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Objects;
 
-public class SettingsController {
+public class Settings {
 
     private final Stage stage;
     private final Logger logger;
@@ -83,15 +83,15 @@ public class SettingsController {
     @FXML
     private Hyperlink flaticonUrl;
 
-    public SettingsController() {
+    public Settings() {
         stage = new Stage();
-        logger = LoggerFactory.getLogger(SettingsController.class);
+        logger = LoggerFactory.getLogger(Settings.class);
         config = Config.getInstance();
         currentlyActiveHBox = null;
 
         try {
             LoadConfig.loadConfigFromFile();
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/scene.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/settings.fxml"));
             loader.setController(this);
 
             stage.getIcons().add(
