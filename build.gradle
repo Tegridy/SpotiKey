@@ -1,7 +1,7 @@
 plugins {
     id 'application'
     id 'org.openjfx.javafxplugin' version '0.0.10'
-    id "com.github.johnrengelman.shadow" version "7.0.0"
+    id "com.github.johnrengelman.shadow" version "8.1.1"
 }
 
 group 'org.spotikey'
@@ -31,7 +31,7 @@ dependencies {
 }
 
 javafx {
-    version = "19"
+    version = "20"
     modules = [ 'javafx.controls', 'javafx.fxml', 'javafx.swing' ]
 }
 

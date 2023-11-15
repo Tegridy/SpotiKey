@@ -33,6 +33,7 @@ import utils.ToastPosition;
 
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.util.Objects;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
@@ -80,8 +81,8 @@ public class Toast {
         logger = LoggerFactory.getLogger(Toast.class);
 
         try {
-            playImage = new Image(getClass().getResourceAsStream("../icon/play.png"));
-            pauseImage = new Image(getClass().getResourceAsStream("../icon/pause-circle.png"));
+            playImage = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/icon/play.png")));
+            pauseImage = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/icon/pause-circle.png")));
 
             fadeTransition = new FadeTransition(Duration.millis(1300), trackCoverView);
             fadeTransition.setFromValue(0.1);
@@ -107,7 +108,7 @@ public class Toast {
             addEventsToToastButtons();
 
         } catch (Throwable e) {
-            logger.warn("Exception during initializing view: " + e.getMessage());
+            logger.warn("Exception during initializing toast view: " + e.getMessage());
         }
     }
 
