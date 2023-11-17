@@ -22,7 +22,6 @@ public class Main extends Application {
             keystrokeListenerThread.start();
 
             new Settings();
-            new Toast();
 
         } catch (Throwable ex) {
             logger.warn("Application start failure: " + ex.getMessage());

@@ -6,6 +6,7 @@ import de.labystudio.spotifyapi.SpotifyListener;
 import de.labystudio.spotifyapi.model.Track;
 import de.labystudio.spotifyapi.open.OpenSpotifyAPI;
 import javafx.animation.FadeTransition;
+import javafx.concurrent.Task;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -40,7 +41,7 @@ import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
 
-public class Toast {
+public class Toast extends ToastControls {
 
     private final Stage stage;
     private final Logger logger;
@@ -51,33 +52,15 @@ public class Toast {
     private FadeTransition fadeTransition;
     private PlayerController playerControllerInstance;
 
-    @FXML
-    private ProgressBar songProgressBar;
+    private ScreenPosition toastPosition;
 
-    @FXML
-    private ImageView trackCoverView;
-
-    @FXML
-    private Button playPauseButton;
-
-    @FXML
-    private Button nextSongButton;
-
-    @FXML
-    private Button previousSongButton;
-
-    @FXML
-    private ImageView playPauseImageView;
-
-    @FXML
-    private TextField songTitleTextField;
 
     public Toast() {
         stage = new Stage();
         spotifyAPI = SpotifyAPIFactory.create();
         openSpotifyAPI = new OpenSpotifyAPI();
         playerControllerInstance = PlayerController.getInstance();
-
+        toastPosition = ScreenPosition.TASKBAR_START;
         logger = LoggerFactory.getLogger(Toast.class);
 
         try {
@@ -91,7 +74,7 @@ public class Toast {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/toast.fxml"));
             loader.setController(this);
 
-            stage.initModality(Modality.APPLICATION_MODAL);
+            stage.initModality(Modality.NONE);
             stage.initStyle(StageStyle.TRANSPARENT);
             stage.setResizable(false);
             stage.setAlwaysOnTop(true);
@@ -103,10 +86,9 @@ public class Toast {
 
             initSpotifyAPI();
 
-            choosePlaceForToast();
+            choosePlaceForToast(toastPosition);
 
             addEventsToToastButtons();
-
         } catch (Throwable e) {
             logger.warn("Exception during initializing toast view: " + e.getMessage());
         }
@@ -165,9 +147,8 @@ public class Toast {
 
             @Override
             public void onDisconnect(Exception exception) {
-                logger.debug("Disconnected: " + exception.getMessage());
 
-                // TODO Disable toast
+                logger.debug("Disconnected: " + exception.getMessage());
                 spotifyAPI.stop();
             }
         });
@@ -176,11 +157,9 @@ public class Toast {
         fetchAndSetCurrentSongTitle();
     }
 
-    private void choosePlaceForToast() {
+    private void choosePlaceForToast(ScreenPosition screenPosition) {
 
-        // TODO Switch depending on chosen checkbox
-
-        ScreenCoordinates screenCoordinates = ToastPosition.getPositionOnScreen(ScreenPosition.TASKBAR_START);
+        ScreenCoordinates screenCoordinates = ToastPosition.getPositionOnScreen(screenPosition);
 
         stage.setX(screenCoordinates.x());
         stage.setY(screenCoordinates.y());
@@ -232,7 +211,7 @@ public class Toast {
         logger.debug(String.format("Position changed: %s of %s\n", currentPosition, length));
     }
 
-    private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
+    private final ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
     private ScheduledFuture<?> updaterHandle;
 
     public void startUpdatingProgressBar() {
@@ -266,6 +245,17 @@ public class Toast {
             playPauseImageView.setImage(playImage);
         }
         playPauseButton.setGraphic(playPauseImageView);
+    }
+
+    public void setToastPosition(ScreenPosition screenPosition) {
+        toastPosition = screenPosition;
+        choosePlaceForToast(screenPosition);
+    }
+
+    public void disableToast() {
+        stopUpdatingProgressBar();
+        spotifyAPI.stop();
+        stage.close();
     }
 }
 

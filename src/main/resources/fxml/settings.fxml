@@ -101,48 +101,47 @@
             </HBox>
             </AnchorPane>
         </Tab>
-        <Tab text="Toast settings">
+        <Tab text="Toast">
             <content>
                 <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                <children>
-                  <CheckBox fx:id="toastEnableCheckBox" layoutX="14.0" layoutY="14.0" mnemonicParsing="false" selected="true" text="Enable toast" />
+                  <CheckBox fx:id="toastEnableCheckBox" layoutX="14.0" layoutY="14.0" mnemonicParsing="false" onAction="#enableToast" selected="true" text="Enable toast" />
                   <ListView layoutX="34.0" layoutY="71.0" prefHeight="200.0" prefWidth="137.0" />
-                  <HBox layoutX="34.0" layoutY="181.0" prefHeight="35.0" prefWidth="137.0">
+                  <HBox alignment="CENTER" layoutX="32.0" layoutY="176.0" prefHeight="35.0" prefWidth="137.0">
                      <children>
-                        <CheckBox fx:id="bottomRightCheckBox" mnemonicParsing="false" prefHeight="35.0" prefWidth="139.0" text="Bottom right">
-                           <padding>
-                              <Insets left="10.0" />
-                           </padding>
-                        </CheckBox>
-                     </children></HBox>
-                  <HBox layoutX="34.0" layoutY="76.0" prefHeight="35.0" prefWidth="137.0">
-                     <children>
-                        <CheckBox fx:id="taskbarStartCheckBox" mnemonicParsing="false" prefHeight="35.0" prefWidth="136.0" text="Taskbar start">
+                        <RadioButton fx:id="bottomRightRadio" maxWidth="104.0" minWidth="104.0" mnemonicParsing="false" prefHeight="20.0" prefWidth="105.0" text="Bottom right">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
                            <HBox.margin>
-                              <Insets />
-                           </HBox.margin>
-                           <padding>
-                              <Insets left="10.0" />
-                           </padding>
-                        </CheckBox>
+                              <Insets left="5.0" />
+                           </HBox.margin></RadioButton>
+                     </children></HBox>
+                  <HBox alignment="CENTER" layoutX="34.0" layoutY="71.0" prefHeight="35.0" prefWidth="137.0">
+                     <children>
+                        <RadioButton fx:id="taskbarStartRadio" minWidth="104.0" mnemonicParsing="false" text="Taskbar start">
+                           <font>
+                              <Font size="14.0" />
+                           </font></RadioButton>
                      </children>
                   </HBox>
-                  <HBox layoutX="34.0" layoutY="111.0" prefHeight="35.0" prefWidth="137.0">
+                  <HBox alignment="CENTER" layoutX="32.0" layoutY="106.0" prefHeight="35.0" prefWidth="137.0">
                      <children>
-                        <CheckBox fx:id="taskbarEndCheckBox" mnemonicParsing="false" prefHeight="35.0" prefWidth="141.0" text="Taskbar end">
-                           <padding>
-                              <Insets left="10.0" />
-                           </padding>
-                        </CheckBox>
+                        <RadioButton fx:id="taskbarEndRadio" minWidth="104.0" mnemonicParsing="false" text="Taskbar end">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                           <HBox.margin>
+                              <Insets left="5.0" />
+                           </HBox.margin></RadioButton>
                      </children>
                   </HBox>
-                  <HBox layoutX="34.0" layoutY="146.0" prefHeight="35.0" prefWidth="137.0">
+                  <HBox alignment="CENTER" layoutX="34.0" layoutY="141.0" prefHeight="35.0" prefWidth="137.0">
                      <children>
-                        <CheckBox fx:id="bottomLeftCheckBox" mnemonicParsing="false" prefHeight="35.0" prefWidth="136.0" text="Bottom left">
-                           <padding>
-                              <Insets left="10.0" />
-                           </padding>
-                        </CheckBox>
+                        <RadioButton fx:id="bottomLeftRadio" minWidth="104.0" mnemonicParsing="false" text="Bottom left">
+                           <font>
+                              <Font size="14.0" />
+                           </font></RadioButton>
                      </children>
                   </HBox>
                   <Label layoutX="34.0" layoutY="45.0" text="Toast position:">

@@ -4,14 +4,13 @@ import com.dustinredmond.fxtrayicon.FXTrayIcon;
 import config.LoadConfig;
 import config.SaveConfig;
 import javafx.application.Platform;
+import javafx.beans.value.ChangeListener;
 import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.Hyperlink;
+import javafx.scene.control.*;
 import javafx.scene.control.MenuItem;
-import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.HBox;
@@ -20,9 +19,10 @@ import javafx.stage.Stage;
 import config.Config;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import utils.ScreenPosition;
 import utils.Utils;
 
-import java.awt.Desktop;
+import java.awt.*;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -30,46 +30,21 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Objects;
 
-public class Settings {
+public class Settings extends SettingsControls {
 
     private final Stage stage;
     private final Logger logger;
     private Config config;
 
-    @FXML
-    private CheckBox controlCheckBox;
-    @FXML
-    private CheckBox altCheckBox;
-    @FXML
-    private CheckBox shiftCheckBox;
-    @FXML
-    private CheckBox playPauseCheckBox;
-    @FXML
-    private CheckBox nextSongCheckBox;
-    @FXML
-    private CheckBox previousSongCheckBox;
-    @FXML
-    private CheckBox volumeUpCheckBox;
-    @FXML
-    private CheckBox volumeDownCheckBox;
-    @FXML
-    private TextField currentKeyTextField;
+    private Toast toast;
 
     private HBox currentlyActiveHBox;
 
-    @FXML
-    private HBox playPauseHBox;
-    @FXML
-    private HBox nextSongHBox;
-    @FXML
-    private HBox previousSongHBox;
-    @FXML
-    private HBox volumeUpHBox;
-    @FXML
-    private HBox volumeDownHBox;
-
     private final ArrayList<HBox> hBoxes;
 
+    private final ToggleGroup taskbarPositionGroup;
+
+    private ChangeListener<? super Toggle> toggleListener;
     private int playPauseKeyCode;
     private int nextSongKeyCode;
     private int previousSongKeyCode;
@@ -88,6 +63,7 @@ public class Settings {
         logger = LoggerFactory.getLogger(Settings.class);
         config = Config.getInstance();
         currentlyActiveHBox = null;
+        taskbarPositionGroup = new ToggleGroup();
 
         try {
             LoadConfig.loadConfigFromFile();
@@ -101,7 +77,7 @@ public class Settings {
             initTrayIconMenu();
 
 
-            stage.initModality(Modality.APPLICATION_MODAL);
+            stage.initModality(Modality.NONE);
             stage.setResizable(false);
 
             stage.setScene(new Scene(loader.load()));
@@ -113,6 +89,11 @@ public class Settings {
 
             setUrlsOpener();
 
+            taskbarStartRadio.setToggleGroup(taskbarPositionGroup);
+            taskbarEndRadio.setToggleGroup(taskbarPositionGroup);
+            bottomLeftRadio.setToggleGroup(taskbarPositionGroup);
+            bottomRightRadio.setToggleGroup(taskbarPositionGroup);
+
         } catch (Throwable e) {
             logger.warn("Exception during initializing view: " + e.getMessage());
             e.printStackTrace();
@@ -120,6 +101,10 @@ public class Settings {
 
         this.hBoxes = new ArrayList<>(Arrays.asList(playPauseHBox, nextSongHBox,
                 previousSongHBox, volumeUpHBox, volumeDownHBox));
+
+        toastEnableCheckBox.setSelected(true);
+        taskbarStartRadio.setSelected(true);
+        enableToast();
     }
 
     private void initTrayIconMenu() {
@@ -287,6 +272,43 @@ public class Settings {
         logger.info("Config updated");
 
         SaveConfig.saveConfigToFile(config);
+    }
+
+    @FXML
+    private void enableToast() {
+
+        if (toastEnableCheckBox.isSelected()) {
+            toast = new Toast();
+            addRadioButtonsHandler();
+            taskbarPositionGroup.getToggles().forEach(toggle -> ((RadioButton) toggle).setDisable(false));
+        } else {
+            toast.disableToast();
+            toast = null;
+            System.gc();
+            taskbarPositionGroup.getToggles().forEach(toggle -> ((RadioButton) toggle).setDisable(true));
+
+            if (toggleListener != null) {
+                taskbarPositionGroup.selectedToggleProperty().removeListener(toggleListener);
+            }
+        }
+    }
+
+    @FXML
+    public void addRadioButtonsHandler() {
+
+        toggleListener = (observable, oldValue, newValue) -> {
+            if (newValue == taskbarStartRadio) {
+                toast.setToastPosition(ScreenPosition.TASKBAR_START);
+            } else if (newValue == taskbarEndRadio) {
+                toast.setToastPosition(ScreenPosition.TASKBAR_END);
+            } else if (newValue == bottomLeftRadio) {
+                toast.setToastPosition(ScreenPosition.SCREEN_LEFT);
+            } else if (newValue == bottomRightRadio) {
+                toast.setToastPosition(ScreenPosition.SCREEN_RIGHT);
+            }
+        };
+
+        taskbarPositionGroup.selectedToggleProperty().addListener(toggleListener);
     }
 }
 

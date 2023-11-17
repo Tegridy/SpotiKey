@@ -9,7 +9,7 @@ import player.PlayerController;
 import config.Config;
 
 
-public class KeystrokeListener extends Thread{
+public class KeystrokeListener extends Thread {
 
     private final Logger logger;
     private final PlayerController playerController;
