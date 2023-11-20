@@ -6,19 +6,13 @@ import de.labystudio.spotifyapi.SpotifyListener;
 import de.labystudio.spotifyapi.model.Track;
 import de.labystudio.spotifyapi.open.OpenSpotifyAPI;
 import javafx.animation.FadeTransition;
-import javafx.concurrent.Task;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.ProgressBar;
 
-import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.paint.Color;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -50,10 +44,14 @@ public class Toast extends ToastControls {
     private Image playImage;
     private Image pauseImage;
     private FadeTransition fadeTransition;
-    private PlayerController playerControllerInstance;
-
+    private final PlayerController playerControllerInstance;
     private ScreenPosition toastPosition;
+    private final ScheduledExecutorService scheduler;
+    private ScheduledFuture<?> updaterHandle;
 
+    private final EventHandler<ActionEvent> playPauseEvent;
+    private final EventHandler<ActionEvent> nextSongEvent;
+    private final EventHandler<ActionEvent> previousSongEvent;
 
     public Toast() {
         stage = new Stage();
@@ -61,7 +59,12 @@ public class Toast extends ToastControls {
         openSpotifyAPI = new OpenSpotifyAPI();
         playerControllerInstance = PlayerController.getInstance();
         toastPosition = ScreenPosition.TASKBAR_START;
+        scheduler = Executors.newSingleThreadScheduledExecutor();
         logger = LoggerFactory.getLogger(Toast.class);
+
+        playPauseEvent = event -> playerControllerInstance.playPauseSong();
+        nextSongEvent  = event -> playerControllerInstance.skipToNextSong();
+        previousSongEvent  = event -> playerControllerInstance.skipToPreviousSong();
 
         try {
             playImage = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/icon/play.png")));
@@ -85,10 +88,9 @@ public class Toast extends ToastControls {
             stage.show();
 
             initSpotifyAPI();
-
             choosePlaceForToast(toastPosition);
-
             addEventsToToastButtons();
+
         } catch (Throwable e) {
             logger.warn("Exception during initializing toast view: " + e.getMessage());
         }
@@ -100,8 +102,6 @@ public class Toast extends ToastControls {
         nextSongButton.setOnAction(nextSongEvent);
         previousSongButton.setOnAction(previousSongEvent);
     }
-
-    long posUpdated;
 
     private void initSpotifyAPI() {
 
@@ -131,13 +131,16 @@ public class Toast extends ToastControls {
             @Override
             public void onPositionChanged(int position) {
 
-                stopUpdatingProgressBar();
                 startUpdatingProgressBar();
             }
 
             @Override
             public void onPlayBackChanged(boolean isPlaying) {
+
                 logger.debug(isPlaying ? "Song started playing" : "Song stopped playing");
+                if (!isPlaying) {
+                    stopUpdatingProgressBar();
+                }
                 changePlayPauseIcon(isPlaying);
             }
 
@@ -203,16 +206,11 @@ public class Toast extends ToastControls {
 
         int length = spotifyAPI.getTrack().getLength();
         int currentPosition = spotifyAPI.getPosition();
-
         double currentProgress = 1.0F / length * currentPosition;
 
         songProgressBar.setProgress(currentProgress);
-
         logger.debug(String.format("Position changed: %s of %s\n", currentPosition, length));
     }
-
-    private final ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
-    private ScheduledFuture<?> updaterHandle;
 
     public void startUpdatingProgressBar() {
 
@@ -228,14 +226,11 @@ public class Toast extends ToastControls {
     }
 
     public void stopUpdatingProgressBar() {
+
         if (updaterHandle != null) {
             updaterHandle.cancel(true);
         }
     }
-
-    private final EventHandler<ActionEvent> playPauseEvent = event -> playerControllerInstance.playPauseSong();
-    private final EventHandler<ActionEvent> nextSongEvent = event -> playerControllerInstance.skipToNextSong();
-    private final EventHandler<ActionEvent> previousSongEvent = event -> playerControllerInstance.skipToPreviousSong();
 
     private void changePlayPauseIcon(boolean isPlaying) {
 
@@ -248,11 +243,13 @@ public class Toast extends ToastControls {
     }
 
     public void setToastPosition(ScreenPosition screenPosition) {
+
         toastPosition = screenPosition;
         choosePlaceForToast(screenPosition);
     }
 
     public void disableToast() {
+
         stopUpdatingProgressBar();
         spotifyAPI.stop();
         stage.close();

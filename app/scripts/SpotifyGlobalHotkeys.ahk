@@ -21,7 +21,7 @@
                      #SingleInstance
                      #NoTrayIcon
 
-                     settimer, showlbl, 5
+                     settimer, showlbl, 50
 
                      showlbl:
                      WinGet, hwnd, ID, SpotiKeyToast
