@@ -34,7 +34,7 @@ public class Settings extends SettingsControls {
 
     private final Stage stage;
     private final Logger logger;
-    private Config config;
+    private final Config config;
 
     private Toast toast;
 

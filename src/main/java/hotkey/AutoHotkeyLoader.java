@@ -5,17 +5,20 @@ import com.sun.jna.WString;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Objects;
+
 public class AutoHotkeyLoader {
 
-    private static final String userDir = System.getProperty("user.dir");
-    private final String autohotkeyDir = userDir + "\\app\\libs";
-    private final String scriptsDir = userDir + "\\app\\scripts\\SpotifyGlobalHotkeys.ahk";
+    private final String autohotkeyDir;
+    private final String scriptsDir;
     private static AutoHotkeyDll autoHotKeyDll;
     private final Logger logger;
 
 
     private AutoHotkeyLoader() {
 
+        autohotkeyDir = "src/main/resources/libs";
+        scriptsDir = "src/main/resources/scripts/SpotifyGlobalHotkeys.ahk";
         logger = LoggerFactory.getLogger(AutoHotkeyLoader.class);
         setLibsPath();
         loadAutohotkeyDll();

@@ -8,7 +8,7 @@ public class Config {
 
     private static Config instance;
 
-    private Logger logger;
+    private final Logger logger;
 
     boolean controlMustBePressed;
     boolean altMustBePressed;
