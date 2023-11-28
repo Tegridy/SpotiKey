@@ -25,7 +25,6 @@ public class Main extends Application {
 
         } catch (Throwable ex) {
             logger.warn("Application start failure: " + ex.getMessage());
-            ex.printStackTrace();
         }
     }
 

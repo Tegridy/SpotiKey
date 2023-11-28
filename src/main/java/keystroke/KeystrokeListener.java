@@ -19,9 +19,8 @@ public class KeystrokeListener extends Thread {
         logger = LoggerFactory.getLogger(KeystrokeListener.class);
         GlobalKeyboardHook keyboardHook = new GlobalKeyboardHook(false); // Use false here to switch to hook instead of raw input
         playerController = PlayerController.getInstance();
-        logger.info("Global keyboard hook successfully started");
+        logger.debug("Global keyboard hook successfully started");
         Config config = Config.getInstance();
-
 
         keyboardHook.addKeyListener(new GlobalKeyAdapter() {
 

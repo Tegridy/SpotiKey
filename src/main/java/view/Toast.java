@@ -91,8 +91,8 @@ public class Toast extends ToastControls {
             choosePlaceForToast(toastPosition);
             addEventsToToastButtons();
 
-        } catch (Throwable e) {
-            logger.warn("Exception during initializing toast view: " + e.getMessage());
+        } catch (Throwable ex) {
+            logger.warn("Exception during initializing toast view: " + ex.getMessage());
         }
     }
 
@@ -126,22 +126,23 @@ public class Toast extends ToastControls {
                 logger.debug(String.format("Track changed: %s (%s)\n", track, track.getLength()));
                 fetchAndSetCurrentTrackImage();
                 fetchAndSetCurrentSongTitle();
+                startUpdatingProgressBar();
             }
 
             @Override
             public void onPositionChanged(int position) {
-
-                startUpdatingProgressBar();
             }
 
             @Override
             public void onPlayBackChanged(boolean isPlaying) {
 
-                logger.debug(isPlaying ? "Song started playing" : "Song stopped playing");
-                if (!isPlaying) {
+                if (isPlaying) {
+                    startUpdatingProgressBar();
+                } else {
                     stopUpdatingProgressBar();
                 }
                 changePlayPauseIcon(isPlaying);
+                logger.debug(isPlaying ? "Song started playing" : "Song stopped playing");
             }
 
             @Override
@@ -149,9 +150,9 @@ public class Toast extends ToastControls {
             }
 
             @Override
-            public void onDisconnect(Exception exception) {
+            public void onDisconnect(Exception ex) {
 
-                logger.debug("Disconnected: " + exception.getMessage());
+                logger.debug("Disconnected: " + ex.getMessage());
                 spotifyAPI.stop();
             }
         });

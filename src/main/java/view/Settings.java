@@ -59,6 +59,7 @@ public class Settings extends SettingsControls {
     private Hyperlink flaticonUrl;
 
     public Settings() {
+
         stage = new Stage();
         logger = LoggerFactory.getLogger(Settings.class);
         config = Config.getInstance();
@@ -74,19 +75,13 @@ public class Settings extends SettingsControls {
                     new Image(
                             Objects.requireNonNull(getClass().getResourceAsStream("/icon/keyboard-key-s-32.png"))));
 
-            initTrayIconMenu();
-
-
             stage.initModality(Modality.NONE);
             stage.setResizable(false);
-
             stage.setScene(new Scene(loader.load()));
             stage.setTitle("SpotiKey");
 
-            logger.info("Scene loaded");
-
+            initTrayIconMenu();
             updateView();
-
             setUrlsOpener();
 
             taskbarStartRadio.setToggleGroup(taskbarPositionGroup);
@@ -94,9 +89,8 @@ public class Settings extends SettingsControls {
             bottomLeftRadio.setToggleGroup(taskbarPositionGroup);
             bottomRightRadio.setToggleGroup(taskbarPositionGroup);
 
-        } catch (Throwable e) {
-            logger.warn("Exception during initializing view: " + e.getMessage());
-            e.printStackTrace();
+        } catch (Exception ex) {
+            logger.warn("Exception during initializing view: " + ex.getMessage());
         }
 
         this.hBoxes = new ArrayList<>(Arrays.asList(playPauseHBox, nextSongHBox,
@@ -108,6 +102,7 @@ public class Settings extends SettingsControls {
     }
 
     private void initTrayIconMenu() {
+
         FXTrayIcon icon = new FXTrayIcon(stage, getClass().getResource("/icon/keyboard-key-s-32.png"));
 
         MenuItem settingsMenuItem = new MenuItem("Settings");
@@ -126,11 +121,10 @@ public class Settings extends SettingsControls {
         icon.addMenuItem(exitAppMenuItem);
 
         icon.show();
-
-        logger.info("Tray icon initialized");
     }
 
     private void updateView() {
+
         this.controlCheckBox.setSelected(config.controlMustBePressed());
         this.altCheckBox.setSelected(config.altMustBePressed());
         this.shiftCheckBox.setSelected(config.shiftMustBePressed());
@@ -140,11 +134,10 @@ public class Settings extends SettingsControls {
         this.previousSongCheckBox.setSelected(config.isPreviousSongKeyCombinationActivated());
         this.volumeUpCheckBox.setSelected(config.isVolumeUpKeyCombinationActivated());
         this.volumeDownCheckBox.setSelected(config.isVolumeDownKeyCombinationActivated());
-
-        logger.info("Updated view");
     }
 
     private void setUrlsOpener() {
+
         githubUrl.setOnAction(e -> {
             openURL("https://github.com/Tegridy/SpotiKey");
         });
@@ -159,6 +152,7 @@ public class Settings extends SettingsControls {
     }
 
     private void openURL(String url) {
+
         try {
             Desktop.getDesktop().browse(new URL(url).toURI());
         } catch (IOException | URISyntaxException e) {
@@ -171,9 +165,7 @@ public class Settings extends SettingsControls {
     private void setCurrentlyActiveOption(Event event) {
 
         Object eventObject = event.getSource();
-
         resetHBoxesCssBgColorClass();
-
         String keyType = "";
 
         if (eventObject.equals(playPauseHBox)) {
@@ -208,27 +200,29 @@ public class Settings extends SettingsControls {
             ((HBox) eventObject).setStyle("-fx-background-color: #2b8ed9;");
         }
 
-        logger.info(eventObject + " key is currently selected to change.");
+        logger.debug(eventObject + " key is currently selected to change.");
     }
 
     private void resetHBoxesCssBgColorClass() {
+
         hBoxes.forEach(item -> item.setStyle("-fx-background-color: transparent;"));
-        logger.info("Reset HBoxes background color");
     }
 
     private String findKeyCodeString(int playPauseKeyCode) {
+
         return Utils.keyCodes.get(playPauseKeyCode);
     }
 
     private void updateCurrentKeyTextField(String keyType) {
+
         currentKeyTextField.textProperty().setValue(keyType);
         logger.info("Updated currentKeyTextField with value: " + keyType);
     }
 
     @FXML
     public void assignNewKey(KeyEvent event) {
-        int pressedKeyCode = event.getCode().getCode();
 
+        int pressedKeyCode = event.getCode().getCode();
         String keyType = Utils.keyCodes.get(pressedKeyCode);
 
         if (currentlyActiveHBox != null) {
@@ -243,7 +237,7 @@ public class Settings extends SettingsControls {
             } else if (currentlyActiveHBox.equals(volumeDownHBox)) {
                 this.volumeDownKeyCode = pressedKeyCode;
             }
-            logger.info("Assigned: " + keyType + " as "
+            logger.debug("Assigned: " + keyType + " as "
                     + currentlyActiveHBox.getId().replace("HBox", "") + " key.");
         }
 
@@ -284,7 +278,6 @@ public class Settings extends SettingsControls {
         } else {
             toast.disableToast();
             toast = null;
-            System.gc();
             taskbarPositionGroup.getToggles().forEach(toggle -> ((RadioButton) toggle).setDisable(true));
 
             if (toggleListener != null) {

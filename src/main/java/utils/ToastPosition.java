@@ -54,6 +54,7 @@ public class ToastPosition {
     }
 
     private static ScreenCoordinates getScreenBottomRightPosition() {
+
         WinDef.RECT bounds = getBounds();
 
         int trayNotifyHeight = bounds.toRectangle().height;
@@ -66,18 +67,15 @@ public class ToastPosition {
         return new ScreenCoordinates(posX, posY);
     }
 
-    static HWND HWND_TOPMOST=new HWND(Pointer.createConstant(-1));
-
     private static WinDef.RECT getBounds() {
+
         User32 user32 = User32.INSTANCE;
 
         WinDef.HWND taskbarHWND = user32.FindWindow("Shell_TrayWnd", null);
         WinDef.HWND trayNotifyHWND = user32.FindWindowEx(taskbarHWND, null, "TrayNotifyWnd", null);
 
         WinDef.RECT bounds = new WinDef.RECT();
-        //bounds.write();
         user32.GetWindowRect(trayNotifyHWND, bounds);
-        //bounds.read();
 
         return bounds;
     }
@@ -92,6 +90,7 @@ public class ToastPosition {
             case SCREEN_LEFT -> screenCoordinates = getScreenBottomLeftPosition();
             default -> screenCoordinates = getScreenBottomRightPosition();
         }
+
         return screenCoordinates;
     }
 }

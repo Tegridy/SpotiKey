@@ -3,6 +3,7 @@ package config;
 import lc.kra.system.keyboard.event.GlobalKeyEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import utils.ScreenPosition;
 
 public class Config {
 
@@ -27,6 +28,7 @@ public class Config {
     boolean volumeDownKeyCombinationActivated;
 
     private Config() {
+
         logger = LoggerFactory.getLogger(Config.class);
 
         this.controlMustBePressed = true;

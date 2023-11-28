@@ -50,11 +50,10 @@ public class LoadConfig {
                 config.setVolumeUpKeyCombinationActivated(convertToBoolean(json.get("volumeUpKeyCombinationActivated")));
                 config.setVolumeDownKeyCombinationActivated(convertToBoolean(json.get("volumeDownKeyCombinationActivated")));
 
-                logger.info("Successfully loaded JSON config file to an object.");
+                logger.debug("Successfully loaded JSON config file to an object.");
 
-            } catch (IOException | ParseException e) {
-                logger.warn(e.getMessage());
-                e.printStackTrace();
+            } catch (IOException | ParseException ex) {
+                logger.warn("Can't load config from file: " + ex.getMessage());
             }
         }
     }

@@ -44,12 +44,11 @@ public class SaveConfig {
 
             file.write(userConfig.toJSONString());
 
-            logger.info("Successfully copied JSON Object to File...");
-            logger.info("JSON Object: " + userConfig);
+            logger.debug("Successfully copied JSON Object to File...");
+            logger.debug("JSON Object: " + userConfig);
 
-        } catch (IOException e) {
-            logger.warn("Can't save config to a file: " + e.getMessage());
-            e.printStackTrace();
+        } catch (IOException ex) {
+            logger.warn("Can't save config to a file: " + ex.getMessage());
         }
     }
 }
