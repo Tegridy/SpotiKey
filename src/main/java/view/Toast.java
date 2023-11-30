@@ -62,6 +62,15 @@ public class Toast extends ToastControls {
         scheduler = Executors.newSingleThreadScheduledExecutor();
         logger = LoggerFactory.getLogger(Toast.class);
 
+        // Make parent stage to remove toast taskbar icon
+        Stage parentStage = new Stage();
+        parentStage.initStyle(StageStyle.UTILITY);
+        parentStage.setOpacity(0);
+        parentStage.setHeight(1);
+        parentStage.setWidth(1);
+        parentStage.setIconified(true);
+        parentStage.show();
+
         playPauseEvent = event -> playerControllerInstance.playPauseSong();
         nextSongEvent  = event -> playerControllerInstance.skipToNextSong();
         previousSongEvent  = event -> playerControllerInstance.skipToPreviousSong();
@@ -77,6 +86,7 @@ public class Toast extends ToastControls {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/toast.fxml"));
             loader.setController(this);
 
+            stage.initOwner(parentStage);
             stage.initModality(Modality.NONE);
             stage.initStyle(StageStyle.TRANSPARENT);
             stage.setResizable(false);
@@ -254,6 +264,10 @@ public class Toast extends ToastControls {
         stopUpdatingProgressBar();
         spotifyAPI.stop();
         stage.close();
+    }
+
+    public ScreenPosition getToastPosition() {
+        return toastPosition;
     }
 }
 

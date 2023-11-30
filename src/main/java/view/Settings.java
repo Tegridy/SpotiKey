@@ -134,6 +134,18 @@ public class Settings extends SettingsControls {
         this.previousSongCheckBox.setSelected(config.isPreviousSongKeyCombinationActivated());
         this.volumeUpCheckBox.setSelected(config.isVolumeUpKeyCombinationActivated());
         this.volumeDownCheckBox.setSelected(config.isVolumeDownKeyCombinationActivated());
+
+        this.toastEnableCheckBox.setSelected(config.isToastEnabled());
+
+        if (toastEnableCheckBox.isSelected()) {
+
+            switch (ScreenPosition.valueOf(config.getToastScreenPosition())) {
+                case SCREEN_LEFT -> bottomLeftRadio.setSelected(true);
+                case SCREEN_RIGHT -> bottomRightRadio.setSelected(true);
+                case TASKBAR_END -> taskbarEndRadio.setSelected(true);
+                default -> taskbarStartRadio.setSelected(true);
+            }
+        }
     }
 
     private void setUrlsOpener() {
@@ -155,9 +167,8 @@ public class Settings extends SettingsControls {
 
         try {
             Desktop.getDesktop().browse(new URL(url).toURI());
-        } catch (IOException | URISyntaxException e) {
-            logger.warn("Cannot open browser: " + e.getMessage());
-            e.printStackTrace();
+        } catch (IOException | URISyntaxException ex) {
+            logger.warn("Can't open browser: " + ex.getMessage());
         }
     }
 
@@ -248,6 +259,7 @@ public class Settings extends SettingsControls {
 
     @FXML
     private void saveConfig() {
+
         config.setControlMustBePressed(this.controlCheckBox.isSelected());
         config.setAltMustBePressed(this.altCheckBox.isSelected());
         config.setShiftMustBePressed(this.shiftCheckBox.isSelected());
@@ -263,7 +275,10 @@ public class Settings extends SettingsControls {
         config.setVolumeDownKey(volumeDownKeyCode);
         config.setVolumeDownKeyCombinationActivated(volumeDownCheckBox.isSelected());
 
-        logger.info("Config updated");
+        if (toast != null) {
+            config.setToastEnabled(toastEnableCheckBox.isSelected());
+            config.setToastScreenPosition(toast.getToastPosition());
+        }
 
         SaveConfig.saveConfigToFile(config);
     }

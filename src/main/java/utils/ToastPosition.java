@@ -34,7 +34,7 @@ public class ToastPosition {
         int screenWidth = bounds.left;
         int screenHeight = bounds.bottom;
 
-        double posX = screenWidth - trayNotifyWidth - 25;
+        double posX = screenWidth - trayNotifyWidth - 40;
         double posY = screenHeight - trayNotifyHeight;
 
         return new ScreenCoordinates(posX, posY);

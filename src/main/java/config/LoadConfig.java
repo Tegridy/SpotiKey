@@ -5,6 +5,7 @@ import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import utils.ScreenPosition;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -17,11 +18,10 @@ public class LoadConfig {
     private static Logger logger;
 
     public static void loadConfigFromFile() {
+
         logger = LoggerFactory.getLogger(LoadConfig.class);
-
         Config config = Config.getInstance();
-
-        File configFile = new File(System.getProperty("user.dir") + "\\app\\configs\\conf.json");
+        File configFile = new File(System.getProperty("user.dir") + "\\configs\\conf.json");
 
         if (configFile.length() > 1) {
 
@@ -50,6 +50,9 @@ public class LoadConfig {
                 config.setVolumeUpKeyCombinationActivated(convertToBoolean(json.get("volumeUpKeyCombinationActivated")));
                 config.setVolumeDownKeyCombinationActivated(convertToBoolean(json.get("volumeDownKeyCombinationActivated")));
 
+                config.setToastEnabled(convertToBoolean(json.get("toastEnabled")));
+                config.setToastScreenPosition(convertToScreenPosition(json.get("toastScreenPosition")));
+
                 logger.debug("Successfully loaded JSON config file to an object.");
 
             } catch (IOException | ParseException ex) {
@@ -64,5 +67,25 @@ public class LoadConfig {
 
     private static int convertToInt(Object jsonObject) {
         return Integer.parseInt(jsonObject.toString());
+    }
+
+    private static ScreenPosition convertToScreenPosition(Object jsonObject) {
+
+        String position = String.valueOf(jsonObject);
+
+        switch (ScreenPosition.valueOf(position)) {
+            case SCREEN_LEFT -> {
+                return ScreenPosition.SCREEN_LEFT;
+            }
+            case SCREEN_RIGHT -> {
+                return ScreenPosition.SCREEN_RIGHT;
+            }
+            case TASKBAR_END -> {
+                return ScreenPosition.TASKBAR_END;
+            }
+            default -> {
+                return ScreenPosition.TASKBAR_START;
+            }
+        }
     }
 }

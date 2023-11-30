@@ -14,10 +14,10 @@ public class SaveConfig {
 
     @SuppressWarnings("unchecked")
     public static void saveConfigToFile(Config config) {
+
         logger = LoggerFactory.getLogger(SaveConfig.class);
 
         JSONObject userConfig = new JSONObject();
-
         JSONObject configProperties = new JSONObject();
 
         configProperties.put("controlMustBePressed", config.controlMustBePressed());
@@ -36,17 +36,19 @@ public class SaveConfig {
         configProperties.put("volumeUpKeyCombinationActivated", config.isVolumeUpKeyCombinationActivated());
         configProperties.put("volumeDownKeyCombinationActivated", config.isVolumeDownKeyCombinationActivated());
 
+        configProperties.put("toastEnabled", config.isToastEnabled());
+        configProperties.put("toastScreenPosition", config.getToastScreenPosition());
+
         userConfig.put("config", configProperties);
 
-        File configFile = new File(System.getProperty("user.dir") + "\\app\\configs\\conf.json");
+        File configFile = new File(System.getProperty("user.dir") + "\\configs\\conf.json");
 
         try (FileWriter file = new FileWriter(configFile)) {
 
             file.write(userConfig.toJSONString());
 
             logger.debug("Successfully copied JSON Object to File...");
-            logger.debug("JSON Object: " + userConfig);
-
+            logger.debug("Config updated");
         } catch (IOException ex) {
             logger.warn("Can't save config to a file: " + ex.getMessage());
         }
