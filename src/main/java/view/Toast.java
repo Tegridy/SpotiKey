@@ -1,11 +1,13 @@
 package view;
 
+import config.Config;
 import de.labystudio.spotifyapi.SpotifyAPI;
 import de.labystudio.spotifyapi.SpotifyAPIFactory;
 import de.labystudio.spotifyapi.SpotifyListener;
 import de.labystudio.spotifyapi.model.Track;
 import de.labystudio.spotifyapi.open.OpenSpotifyAPI;
 import javafx.animation.FadeTransition;
+import javafx.application.Platform;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -35,9 +37,10 @@ import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
 
-public class Toast extends ToastControls {
+class Toast extends ToastControls {
 
     private final Stage stage;
+    private Scene scene;
     private final Logger logger;
     private final SpotifyAPI spotifyAPI;
     private final OpenSpotifyAPI openSpotifyAPI;
@@ -53,6 +56,8 @@ public class Toast extends ToastControls {
     private final EventHandler<ActionEvent> nextSongEvent;
     private final EventHandler<ActionEvent> previousSongEvent;
 
+    private final Config config;
+
     public Toast() {
         stage = new Stage();
         spotifyAPI = SpotifyAPIFactory.create();
@@ -60,6 +65,7 @@ public class Toast extends ToastControls {
         playerControllerInstance = PlayerController.getInstance();
         toastPosition = ScreenPosition.TASKBAR_START;
         scheduler = Executors.newSingleThreadScheduledExecutor();
+        config = Config.getInstance();
         logger = LoggerFactory.getLogger(Toast.class);
 
         // Make parent stage to remove toast taskbar icon
@@ -92,10 +98,9 @@ public class Toast extends ToastControls {
             stage.setResizable(false);
             stage.setAlwaysOnTop(true);
             stage.setTitle("SpotiKeyToast");
-            Scene scene = new Scene(loader.load());
+            scene = new Scene(loader.load());
             scene.setFill(Color.TRANSPARENT);
             stage.setScene(scene);
-            stage.show();
 
             initSpotifyAPI();
             choosePlaceForToast(toastPosition);
@@ -119,6 +124,10 @@ public class Toast extends ToastControls {
             @Override
             public void onConnect() {
                 logger.debug("Connected to Spotify!");
+
+                if (config.isToastEnabled()) {
+                    enableToast();
+                }
 
                 try {
                     // Sleep for 1s and let api properly connect
@@ -163,12 +172,18 @@ public class Toast extends ToastControls {
             public void onDisconnect(Exception ex) {
 
                 logger.debug("Disconnected: " + ex.getMessage());
+                disableToast();
                 spotifyAPI.stop();
             }
         });
 
         spotifyAPI.initialize();
         fetchAndSetCurrentSongTitle();
+    }
+
+    private void enableToast() {
+
+        Platform.runLater(stage::show);
     }
 
     private void choosePlaceForToast(ScreenPosition screenPosition) {
@@ -257,13 +272,19 @@ public class Toast extends ToastControls {
 
         toastPosition = screenPosition;
         choosePlaceForToast(screenPosition);
+
+        if (screenPosition == ScreenPosition.SCREEN_LEFT || screenPosition == ScreenPosition.SCREEN_RIGHT) {
+            scene.setFill(Color.web("#121212"));
+        } else {
+            scene.setFill(Color.TRANSPARENT);
+        }
     }
 
     public void disableToast() {
 
         stopUpdatingProgressBar();
         spotifyAPI.stop();
-        stage.close();
+        Platform.runLater(stage::close);
     }
 
     public ScreenPosition getToastPosition() {

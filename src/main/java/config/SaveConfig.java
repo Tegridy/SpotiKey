@@ -3,6 +3,7 @@ package config;
 import org.json.simple.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import view.Settings;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -12,12 +13,39 @@ public class SaveConfig {
 
     private static Logger logger;
 
-    @SuppressWarnings("unchecked")
     public static void saveConfigToFile(Config config) {
 
         logger = LoggerFactory.getLogger(SaveConfig.class);
-
         JSONObject userConfig = new JSONObject();
+        updateConfig(config, userConfig);
+
+        File dir = new File( System.getenv("APPDATA"), "SpotiKey\\configs");
+        File configFile = new File(dir, "conf.json");
+
+        try {
+            if (!dir.exists()) {
+                if (dir.mkdirs() && configFile.createNewFile()) {
+                    logger.debug("Config file created successfully.");
+                }
+            }
+        } catch (IOException ex) {
+            logger.warn("Could not save config file: " + ex.getMessage());
+        }
+
+        try (FileWriter file = new FileWriter(configFile)) {
+
+            file.write(userConfig.toJSONString());
+
+            logger.debug("Successfully copied JSON Object to File...");
+            logger.debug("Config updated");
+        } catch (IOException ex) {
+            logger.warn("Can't save config to a file: " + ex.getMessage());
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    private static void updateConfig(Config config, JSONObject userConfig) {
+
         JSONObject configProperties = new JSONObject();
 
         configProperties.put("controlMustBePressed", config.controlMustBePressed());
@@ -40,17 +68,5 @@ public class SaveConfig {
         configProperties.put("toastScreenPosition", config.getToastScreenPosition());
 
         userConfig.put("config", configProperties);
-
-        File configFile = new File(System.getProperty("user.dir") + "\\configs\\conf.json");
-
-        try (FileWriter file = new FileWriter(configFile)) {
-
-            file.write(userConfig.toJSONString());
-
-            logger.debug("Successfully copied JSON Object to File...");
-            logger.debug("Config updated");
-        } catch (IOException ex) {
-            logger.warn("Can't save config to a file: " + ex.getMessage());
-        }
     }
 }

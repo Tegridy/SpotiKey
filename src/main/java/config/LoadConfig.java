@@ -6,6 +6,7 @@ import org.json.simple.parser.ParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import utils.ScreenPosition;
+import view.Settings;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -21,9 +22,9 @@ public class LoadConfig {
 
         logger = LoggerFactory.getLogger(LoadConfig.class);
         Config config = Config.getInstance();
-        File configFile = new File(System.getProperty("user.dir") + "\\configs\\conf.json");
+        File configFile = new File(System.getenv("APPDATA"), "SpotiKey\\configs\\conf.json");
 
-        if (configFile.length() > 1) {
+        if (configFile.exists()) {
 
             try (BufferedReader fileReader = new BufferedReader(new FileReader(configFile))) {
 
@@ -54,7 +55,6 @@ public class LoadConfig {
                 config.setToastScreenPosition(convertToScreenPosition(json.get("toastScreenPosition")));
 
                 logger.debug("Successfully loaded JSON config file to an object.");
-
             } catch (IOException | ParseException ex) {
                 logger.warn("Can't load config from file: " + ex.getMessage());
             }

@@ -93,7 +93,7 @@ public class Settings extends SettingsControls {
             logger.warn("Exception during initializing view: " + ex.getMessage());
         }
 
-        this.hBoxes = new ArrayList<>(Arrays.asList(playPauseHBox, nextSongHBox,
+        hBoxes = new ArrayList<>(Arrays.asList(playPauseHBox, nextSongHBox,
                 previousSongHBox, volumeUpHBox, volumeDownHBox));
 
         toastEnableCheckBox.setSelected(true);
@@ -123,29 +123,33 @@ public class Settings extends SettingsControls {
         icon.show();
     }
 
-    private void updateView() {
+    public void updateView() {
 
-        this.controlCheckBox.setSelected(config.controlMustBePressed());
-        this.altCheckBox.setSelected(config.altMustBePressed());
-        this.shiftCheckBox.setSelected(config.shiftMustBePressed());
+        Platform.runLater(() -> {
 
-        this.playPauseCheckBox.setSelected(config.isPlayPauseKeyCombinationActivated());
-        this.nextSongCheckBox.setSelected(config.isNextSongKeyCombinationActivated());
-        this.previousSongCheckBox.setSelected(config.isPreviousSongKeyCombinationActivated());
-        this.volumeUpCheckBox.setSelected(config.isVolumeUpKeyCombinationActivated());
-        this.volumeDownCheckBox.setSelected(config.isVolumeDownKeyCombinationActivated());
+            controlCheckBox.setSelected(config.controlMustBePressed());
+            altCheckBox.setSelected(config.altMustBePressed());
+            shiftCheckBox.setSelected(config.shiftMustBePressed());
 
-        this.toastEnableCheckBox.setSelected(config.isToastEnabled());
+            playPauseCheckBox.setSelected(config.isPlayPauseKeyCombinationActivated());
+            nextSongCheckBox.setSelected(config.isNextSongKeyCombinationActivated());
+            previousSongCheckBox.setSelected(config.isPreviousSongKeyCombinationActivated());
+            volumeUpCheckBox.setSelected(config.isVolumeUpKeyCombinationActivated());
+            volumeDownCheckBox.setSelected(config.isVolumeDownKeyCombinationActivated());
 
-        if (toastEnableCheckBox.isSelected()) {
+            toastEnableCheckBox.setSelected(config.isToastEnabled());
 
-            switch (ScreenPosition.valueOf(config.getToastScreenPosition())) {
-                case SCREEN_LEFT -> bottomLeftRadio.setSelected(true);
-                case SCREEN_RIGHT -> bottomRightRadio.setSelected(true);
-                case TASKBAR_END -> taskbarEndRadio.setSelected(true);
-                default -> taskbarStartRadio.setSelected(true);
+            if (toastEnableCheckBox.isSelected()) {
+
+                switch (ScreenPosition.valueOf(config.getToastScreenPosition())) {
+                    case SCREEN_LEFT -> bottomLeftRadio.setSelected(true);
+                    case SCREEN_RIGHT -> bottomRightRadio.setSelected(true);
+                    case TASKBAR_END -> taskbarEndRadio.setSelected(true);
+                    default -> taskbarStartRadio.setSelected(true);
+                }
             }
-        }
+            logger.debug("Settings view updated.");
+        });
     }
 
     private void setUrlsOpener() {
@@ -238,15 +242,15 @@ public class Settings extends SettingsControls {
 
         if (currentlyActiveHBox != null) {
             if (currentlyActiveHBox.equals(playPauseHBox)) {
-                this.playPauseKeyCode = pressedKeyCode;
+                playPauseKeyCode = pressedKeyCode;
             } else if (currentlyActiveHBox.equals(nextSongHBox)) {
-                this.nextSongKeyCode = pressedKeyCode;
+                nextSongKeyCode = pressedKeyCode;
             } else if (currentlyActiveHBox.equals(previousSongHBox)) {
-                this.previousSongKeyCode = pressedKeyCode;
+                previousSongKeyCode = pressedKeyCode;
             } else if (currentlyActiveHBox.equals(volumeUpHBox)) {
-                this.volumeUpKeyCode = pressedKeyCode;
+                volumeUpKeyCode = pressedKeyCode;
             } else if (currentlyActiveHBox.equals(volumeDownHBox)) {
-                this.volumeDownKeyCode = pressedKeyCode;
+                volumeDownKeyCode = pressedKeyCode;
             }
             logger.debug("Assigned: " + keyType + " as "
                     + currentlyActiveHBox.getId().replace("HBox", "") + " key.");
@@ -256,13 +260,12 @@ public class Settings extends SettingsControls {
     }
 
 
-
     @FXML
     private void saveConfig() {
 
-        config.setControlMustBePressed(this.controlCheckBox.isSelected());
-        config.setAltMustBePressed(this.altCheckBox.isSelected());
-        config.setShiftMustBePressed(this.shiftCheckBox.isSelected());
+        config.setControlMustBePressed(controlCheckBox.isSelected());
+        config.setAltMustBePressed(altCheckBox.isSelected());
+        config.setShiftMustBePressed(shiftCheckBox.isSelected());
 
         config.setPlayPauseKey(playPauseKeyCode);
         config.setPlayPauseKeyCombinationActivated(playPauseCheckBox.isSelected());
