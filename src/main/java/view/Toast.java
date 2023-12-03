@@ -42,8 +42,10 @@ class Toast extends ToastControls {
     private final Stage stage;
     private Scene scene;
     private final Logger logger;
-    private final SpotifyAPI spotifyAPI;
+    private SpotifyAPI spotifyAPI;
     private final OpenSpotifyAPI openSpotifyAPI;
+    private SpotifyListener spotifyListner;
+
     private Image playImage;
     private Image pauseImage;
     private FadeTransition fadeTransition;
@@ -120,7 +122,7 @@ class Toast extends ToastControls {
 
     private void initSpotifyAPI() {
 
-        spotifyAPI.registerListener(new SpotifyListener() {
+        spotifyListner = new SpotifyListener() {
             @Override
             public void onConnect() {
                 logger.debug("Connected to Spotify!");
@@ -175,7 +177,9 @@ class Toast extends ToastControls {
                 disableToast();
                 spotifyAPI.stop();
             }
-        });
+        };
+
+        spotifyAPI.registerListener(spotifyListner);
 
         spotifyAPI.initialize();
         fetchAndSetCurrentSongTitle();
@@ -283,8 +287,12 @@ class Toast extends ToastControls {
     public void disableToast() {
 
         stopUpdatingProgressBar();
+        spotifyAPI.unregisterListener(spotifyListner);
         spotifyAPI.stop();
+        spotifyAPI = null;
         Platform.runLater(stage::close);
+
+        logger.debug("Toast disabled");
     }
 
     public ScreenPosition getToastPosition() {

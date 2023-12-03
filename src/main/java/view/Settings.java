@@ -97,6 +97,15 @@ public class Settings extends SettingsControls {
                 previousSongHBox, volumeUpHBox, volumeDownHBox));
 
         toastEnableCheckBox.setSelected(true);
+        toastEnableCheckBox.selectedProperty().addListener((observable, oldValue, newValue) -> {
+
+            if (newValue) {
+                taskbarPositionGroup.getToggles().forEach(toggle -> ((RadioButton) toggle).setDisable(false));
+            } else {
+                taskbarPositionGroup.getToggles().forEach(toggle -> ((RadioButton) toggle).setDisable(true));
+            }
+        });
+
         taskbarStartRadio.setSelected(true);
         enableToast();
     }
@@ -106,7 +115,13 @@ public class Settings extends SettingsControls {
         FXTrayIcon icon = new FXTrayIcon(stage, getClass().getResource("/icon/keyboard-key-s-32.png"));
 
         MenuItem settingsMenuItem = new MenuItem("Settings");
+        MenuItem toastActivation = new MenuItem("Show / Hide Toast");
         MenuItem exitAppMenuItem = new MenuItem("Exit");
+
+        toastActivation.setOnAction(event -> {
+            toastEnableCheckBox.setSelected(!toastEnableCheckBox.isSelected());
+            enableToast();
+        });
 
         settingsMenuItem.setOnAction(event -> {
             stage.show();
@@ -118,6 +133,7 @@ public class Settings extends SettingsControls {
         });
 
         icon.addMenuItem(settingsMenuItem);
+        icon.addMenuItem(toastActivation);
         icon.addMenuItem(exitAppMenuItem);
 
         icon.show();
@@ -292,12 +308,9 @@ public class Settings extends SettingsControls {
         if (toastEnableCheckBox.isSelected()) {
             toast = new Toast();
             addRadioButtonsHandler();
-            taskbarPositionGroup.getToggles().forEach(toggle -> ((RadioButton) toggle).setDisable(false));
         } else {
             toast.disableToast();
             toast = null;
-            taskbarPositionGroup.getToggles().forEach(toggle -> ((RadioButton) toggle).setDisable(true));
-
             if (toggleListener != null) {
                 taskbarPositionGroup.selectedToggleProperty().removeListener(toggleListener);
             }
