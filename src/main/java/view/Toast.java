@@ -31,10 +31,7 @@ import utils.ToastPosition;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.Objects;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ScheduledFuture;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 
 
 class Toast extends ToastControls {
@@ -148,6 +145,7 @@ class Toast extends ToastControls {
                 fetchAndSetCurrentTrackImage();
                 fetchAndSetCurrentSongTitle();
                 startUpdatingProgressBar();
+                songProgressBar.setProgress(0);
             }
 
             @Override
@@ -243,6 +241,10 @@ class Toast extends ToastControls {
     }
 
     public void startUpdatingProgressBar() {
+
+        if (updaterHandle != null && updaterHandle.state().equals(Future.State.RUNNING)) {
+            return;
+        }
 
         final Runnable updater = () -> {
             try {
