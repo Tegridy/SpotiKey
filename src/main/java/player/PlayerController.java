@@ -39,4 +39,8 @@ public class PlayerController {
     public void volumeDown() {
         autoHotkeyDll.ahkFunction(new WString("jvolumedown"));
     }
+
+    public void mute() {
+        autoHotkeyDll.ahkFunction(new WString("mute"));
+    }
 }

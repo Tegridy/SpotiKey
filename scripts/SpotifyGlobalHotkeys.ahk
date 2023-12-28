@@ -106,7 +106,21 @@
                     	Return
                     }
 
-                    jback()
+;                    jback()
+;                    {
+;                    	DetectHiddenWindows On
+;                    	if !(style & 0x10000000)
+;                    		spotifyHwnd := getSpotifyHwnd()
+;                    		WinShow, ahk_id %spotifyHwnd%
+;                    		WinActivate, ahk_id %spotifyHwnd%
+;                    	if WinActive("ahk_class Chrome_WidgetWin_0")
+;                    		Send, +{Left}
+;                    	else
+;                    		spotifyKey("+{Left}")
+;                    	Return
+;                    }
+
+ jback()
                     {
                     	DetectHiddenWindows On
                     	if !(style & 0x10000000)
@@ -164,4 +178,9 @@
                     		WinActivate, ahk_id %spotifyHwnd%
                     	}
                     	Return
+                    }
+
+                    mute()
+                    {
+                        SoundSet, +1, , mute
                     }

@@ -5,17 +5,15 @@ plugins {
 }
 
 group 'org.spotikey'
-version '1.0'
+version '1.2'
 
 
 repositories {
     mavenCentral()
     maven { url 'https://jitpack.io' }
-    // flatDir { dirs 'C:/Users/Ja/Desktop/' }  dependencies { implementation 'com.github.LabyStudio:java-spotify-api:+:all' }
 }
 
 dependencies {
-    //implementation files('libs/java-spotify-api.jar')
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.0'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.7.0'
 
@@ -39,6 +37,6 @@ test {
     useJUnitPlatform()
 }
 
-applicationDefaultJvmArgs = ["-DSPOTIFY_API_DEBUG"]
+// applicationDefaultJvmArgs = ["-DSPOTIFY_API_DEBUG"]
 
 mainClassName = 'Main'

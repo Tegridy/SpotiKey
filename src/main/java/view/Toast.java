@@ -41,7 +41,7 @@ class Toast extends ToastControls {
     private final Logger logger;
     private SpotifyAPI spotifyAPI;
     private final OpenSpotifyAPI openSpotifyAPI;
-    private SpotifyListener spotifyListner;
+    private SpotifyListener spotifyListener;
 
     private Image playImage;
     private Image pauseImage;
@@ -77,8 +77,8 @@ class Toast extends ToastControls {
         parentStage.show();
 
         playPauseEvent = event -> playerControllerInstance.playPauseSong();
-        nextSongEvent  = event -> playerControllerInstance.skipToNextSong();
-        previousSongEvent  = event -> playerControllerInstance.skipToPreviousSong();
+        nextSongEvent = event -> playerControllerInstance.skipToNextSong();
+        previousSongEvent = event -> playerControllerInstance.skipToPreviousSong();
 
         try {
             playImage = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/icon/play.png")));
@@ -105,6 +105,7 @@ class Toast extends ToastControls {
             choosePlaceForToast(toastPosition);
             addEventsToToastButtons();
 
+
         } catch (Throwable ex) {
             logger.warn("Exception during initializing toast view: " + ex.getMessage());
         }
@@ -117,9 +118,13 @@ class Toast extends ToastControls {
         previousSongButton.setOnAction(previousSongEvent);
     }
 
-    private void initSpotifyAPI() {
+    private void initSpotifyAPI() throws InterruptedException {
 
-        spotifyListner = new SpotifyListener() {
+        // In order to get song initial position it must be played and paused for a while
+        // sound is muted at the time of fetching data from Spotify API
+        playerControllerInstance.mute();
+
+        spotifyListener = new SpotifyListener() {
             @Override
             public void onConnect() {
                 logger.debug("Connected to Spotify!");
@@ -128,13 +133,14 @@ class Toast extends ToastControls {
                     enableToast();
                 }
 
+                // Trigger play/pause
                 try {
-                    // Sleep for 1s and let api properly connect
-                    Thread.sleep(1000);
-                    // Play/Pause song and trigger data read from Spotify client
+                    playerControllerInstance.playPauseSong();
+                    Thread.sleep(100);
                     playerControllerInstance.playPauseSong();
                 } catch (InterruptedException ex) {
-                    logger.warn("Spotify initial data read interrupted: " + ex.getMessage());
+                    logger.warn("Could not access Spotify playback: " + ex.getMessage());
+                    throw new RuntimeException(ex);
                 }
             }
 
@@ -170,17 +176,18 @@ class Toast extends ToastControls {
 
             @Override
             public void onDisconnect(Exception ex) {
-
                 logger.debug("Disconnected: " + ex.getMessage());
-                disableToast();
                 spotifyAPI.stop();
             }
         };
 
-        spotifyAPI.registerListener(spotifyListner);
-
+        spotifyAPI.registerListener(spotifyListener);
         spotifyAPI.initialize();
         fetchAndSetCurrentSongTitle();
+
+        // Restore sound
+        Thread.sleep(1000);
+        playerControllerInstance.mute();
     }
 
     private void enableToast() {
@@ -242,10 +249,6 @@ class Toast extends ToastControls {
 
     public void startUpdatingProgressBar() {
 
-        if (updaterHandle != null && updaterHandle.state().equals(Future.State.RUNNING)) {
-            return;
-        }
-
         final Runnable updater = () -> {
             try {
                 getCurrentSongPositionAndUpdateProgressBar();
@@ -289,7 +292,7 @@ class Toast extends ToastControls {
     public void disableToast() {
 
         stopUpdatingProgressBar();
-        spotifyAPI.unregisterListener(spotifyListner);
+        spotifyAPI.unregisterListener(spotifyListener);
         spotifyAPI.stop();
         spotifyAPI = null;
         Platform.runLater(stage::close);

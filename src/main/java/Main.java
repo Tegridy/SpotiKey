@@ -14,7 +14,7 @@ public class Main extends Application {
     private Logger logger;
 
     @Override
-    public void start(Stage stage) throws FileNotFoundException {
+    public void start(Stage stage) {
         try {
             logger = LoggerFactory.getLogger(Main.class);
 
