@@ -18,6 +18,7 @@
 
                     ; https://gist.github.com/jcsteh/7ccbc6f7b1b7eb85c1c14ac5e0d65195
 
+                    ; Make sure that toast is always on top
                      #SingleInstance
                      #NoTrayIcon
 
@@ -106,21 +107,7 @@
                     	Return
                     }
 
-;                    jback()
-;                    {
-;                    	DetectHiddenWindows On
-;                    	if !(style & 0x10000000)
-;                    		spotifyHwnd := getSpotifyHwnd()
-;                    		WinShow, ahk_id %spotifyHwnd%
-;                    		WinActivate, ahk_id %spotifyHwnd%
-;                    	if WinActive("ahk_class Chrome_WidgetWin_0")
-;                    		Send, +{Left}
-;                    	else
-;                    		spotifyKey("+{Left}")
-;                    	Return
-;                    }
-
- jback()
+                    jback()
                     {
                     	DetectHiddenWindows On
                     	if !(style & 0x10000000)

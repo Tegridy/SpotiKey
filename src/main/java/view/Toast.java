@@ -104,8 +104,6 @@ class Toast extends ToastControls {
             initSpotifyAPI();
             choosePlaceForToast(toastPosition);
             addEventsToToastButtons();
-
-
         } catch (Throwable ex) {
             logger.warn("Exception during initializing toast view: " + ex.getMessage());
         }
@@ -118,11 +116,7 @@ class Toast extends ToastControls {
         previousSongButton.setOnAction(previousSongEvent);
     }
 
-    private void initSpotifyAPI() throws InterruptedException {
-
-        // In order to get song initial position it must be played and paused for a while
-        // sound is muted at the time of fetching data from Spotify API
-        playerControllerInstance.mute();
+    private void initSpotifyAPI() {
 
         spotifyListener = new SpotifyListener() {
             @Override
@@ -131,16 +125,6 @@ class Toast extends ToastControls {
 
                 if (config.isToastEnabled()) {
                     enableToast();
-                }
-
-                // Trigger play/pause
-                try {
-                    playerControllerInstance.playPauseSong();
-                    Thread.sleep(100);
-                    playerControllerInstance.playPauseSong();
-                } catch (InterruptedException ex) {
-                    logger.warn("Could not access Spotify playback: " + ex.getMessage());
-                    throw new RuntimeException(ex);
                 }
             }
 
@@ -184,10 +168,6 @@ class Toast extends ToastControls {
         spotifyAPI.registerListener(spotifyListener);
         spotifyAPI.initialize();
         fetchAndSetCurrentSongTitle();
-
-        // Restore sound
-        Thread.sleep(1000);
-        playerControllerInstance.mute();
     }
 
     private void enableToast() {
