@@ -6,6 +6,7 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.Pane;
 
 class ToastControls {
 
@@ -29,4 +30,7 @@ class ToastControls {
 
     @FXML
     protected TextField songTitleTextField;
+
+    @FXML
+    protected Pane songTitlePane;
 }

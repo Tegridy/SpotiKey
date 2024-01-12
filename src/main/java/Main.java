@@ -26,33 +26,12 @@ public class Main extends Application {
             Thread keystrokeListenerThread = new Thread(new KeystrokeListener());
             keystrokeListenerThread.start();
 
-            cleanSpotifyCache();
-
             new Settings();
 
         } catch (Throwable ex) {
             logger.warn("Application start failure: " + ex.getMessage());
         }
     }
-
-    // Spotify cache must be deleted to help the Spotify API properly read playback data
-    private void cleanSpotifyCache() throws IOException {
-
-        File spotifyCacheDataFolder = new File(System.getenv("LOCALAPPDATA"), "Spotify\\Users");
-
-        if (spotifyCacheDataFolder.exists()) {
-
-            for (File userDataFolder : spotifyCacheDataFolder.listFiles()) {
-                Path cachedSpotifyPlaybackStatusPath = Paths.get(userDataFolder.getPath(), "played-state-storage");
-                Files.deleteIfExists(cachedSpotifyPlaybackStatusPath);
-            }
-
-            logger.debug("Spotify cache was deleted successfully.");
-        } else {
-            logger.debug("Can't find Spotify cache data at Local folder.");
-        }
-    }
-
     @Override
     public void stop() {
         try {

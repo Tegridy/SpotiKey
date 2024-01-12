@@ -6,7 +6,7 @@ import de.labystudio.spotifyapi.SpotifyAPIFactory;
 import de.labystudio.spotifyapi.SpotifyListener;
 import de.labystudio.spotifyapi.model.Track;
 import de.labystudio.spotifyapi.open.OpenSpotifyAPI;
-import javafx.animation.FadeTransition;
+import javafx.animation.*;
 import javafx.application.Platform;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
@@ -16,6 +16,7 @@ import javafx.scene.Scene;
 
 import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
@@ -46,6 +47,9 @@ class Toast extends ToastControls {
     private Image playImage;
     private Image pauseImage;
     private FadeTransition fadeTransition;
+    private TranslateTransition songTitleTransition;
+    private double titlePaneStartPos;
+    private double titlePaneEndPos;
     private final PlayerController playerControllerInstance;
     private ScreenPosition toastPosition;
     private final ScheduledExecutorService scheduler;
@@ -57,6 +61,7 @@ class Toast extends ToastControls {
 
     private final Config config;
 
+    KeyFrame keyFrame;
     public Toast() {
         stage = new Stage();
         spotifyAPI = SpotifyAPIFactory.create();
@@ -80,6 +85,8 @@ class Toast extends ToastControls {
         nextSongEvent = event -> playerControllerInstance.skipToNextSong();
         previousSongEvent = event -> playerControllerInstance.skipToPreviousSong();
 
+
+
         try {
             playImage = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/icon/play.png")));
             pauseImage = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/icon/pause-circle.png")));
@@ -101,12 +108,19 @@ class Toast extends ToastControls {
             scene.setFill(Color.TRANSPARENT);
             stage.setScene(scene);
 
+
+
             initSpotifyAPI();
             choosePlaceForToast(toastPosition);
             addEventsToToastButtons();
+
+
+
         } catch (Throwable ex) {
             logger.warn("Exception during initializing toast view: " + ex.getMessage());
         }
+
+
     }
 
     private void addEventsToToastButtons() {
@@ -202,16 +216,86 @@ class Toast extends ToastControls {
         }
     }
 
+
     private void fetchAndSetCurrentSongTitle() {
+
+
+
+        // Assuming songTitlePane is your existing Pane
+        Rectangle clip = new Rectangle();
+
+// Bind the width and height property of the rectangle to the pane
+        clip.widthProperty().bind(songTitlePane.widthProperty());
+        clip.heightProperty().bind(songTitlePane.heightProperty());
+
+// Set the clip on the pane
+        songTitlePane.setClip(clip);
+
+// Your existing code
+
+
+        //songTitleTextField.relocate(0, 0);
+        songTitleTransition = new TranslateTransition(Duration.seconds(8), songTitleTextField);
+        songTitleTransition.setFromX(0);
+        songTitleTransition.setToX(-songTitleTextField.getLayoutBounds().getWidth());
+        titlePaneEndPos = songTitlePane.getWidth();
+
 
         if (spotifyAPI.hasTrack()) {
             Track track = spotifyAPI.getTrack();
             String songTitle = track.getName();
+            System.out.println(songTitle);
             songTitleTextField.setText(songTitle);
+
+           m1();
+
+
         } else {
             logger.info("Track is not loaded yet. Try to unpause song.");
         }
     }
+
+    private void m1() {
+        // Create a pause of 5 seconds
+        PauseTransition pause = new PauseTransition(Duration.seconds(3));
+
+
+        // Start the animation after the pause
+        pause.setOnFinished(e -> {
+
+            songTitleTransition.setFromX(-2);
+            songTitleTransition.setToX(-songTitlePane.getLayoutBounds().getWidth());
+            System.out.println("1");
+            songTitleTransition.playFromStart();
+            songTitleTransition.setOnFinished(e2 -> {
+                System.out.println("1 end");
+                m2();
+            });
+        });
+        pause.play();
+    }
+
+    private void m2() {
+
+        PauseTransition pause = new PauseTransition(Duration.seconds(3));
+
+        pause.setOnFinished(e2 -> {
+            //transition.setCycleCount(Timeline.INDEFINITE);
+            songTitleTransition.setFromX(titlePaneEndPos);
+            songTitleTransition.setToX(-2);
+
+            System.out.println("2");
+
+            songTitleTransition.playFromStart();
+
+            songTitleTransition.setOnFinished(e3 -> {
+                System.out.println("2 end");
+                m1();
+            });
+        });
+        pause.play();
+    }
+
 
     private void getCurrentSongPositionAndUpdateProgressBar() throws InterruptedException {
 

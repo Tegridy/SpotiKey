@@ -7,46 +7,51 @@
 <?import javafx.scene.text.*?>
 
 <AnchorPane id="toast-background" maxHeight="48.0" maxWidth="250.0" prefHeight="48.0" prefWidth="250.0" stylesheets="@../styles/toast-styles.css" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1">
-   <children>
-      <Button id="nextSongButton" fx:id="nextSongButton" layoutX="212.0" layoutY="4.0" mnemonicParsing="false">
-         <font>
-            <Font size="6.0" />
-         </font>
-         <graphic>
-            <ImageView fitHeight="16.0" fitWidth="16.0" pickOnBounds="true" preserveRatio="true">
-               <image>
-                  <Image url="@../icon/play-skip-forward-circle.png" />
-               </image>
-            </ImageView>
-         </graphic></Button>
-      <Button id="playPauseButton" fx:id="playPauseButton" layoutX="176.0" layoutY="4.0" mnemonicParsing="false" textFill="TRANSPARENT">
-         <font>
-            <Font size="6.0" />
-         </font>
-         <graphic>
-            <ImageView fx:id="playPauseImageView" fitHeight="16.0" fitWidth="16.0" pickOnBounds="true" preserveRatio="true">
-               <image>
-                  <Image url="@../icon/play.png" />
-               </image>
-            </ImageView>
-         </graphic></Button>
-      <ImageView fx:id="trackCoverView" fitHeight="35.0" fitWidth="41.0" layoutX="14.0" layoutY="8.0" pickOnBounds="true" preserveRatio="true">
-         <fitWidth>100</fitWidth>
-         <preserveRatio>true</preserveRatio>
-         <effect>
-            <Glow />
-         </effect>
-      </ImageView>
-      <ProgressBar id="songProgressBar" fx:id="songProgressBar" layoutX="60.0" layoutY="30.0" prefHeight="8.0" prefWidth="176.0" progress="0.0" />
-      <TextField id="songTitleTextField" fx:id="songTitleTextField" disable="true" editable="false" layoutX="52.0" layoutY="2.0" maxHeight="25.0" maxWidth="90.0" prefHeight="25.0" prefWidth="86.0" />
-      <Button id="previousSongButton" fx:id="previousSongButton" layoutX="138.0" layoutY="2.0" mnemonicParsing="false">
-         <graphic>
-            <ImageView fitHeight="16.0" fitWidth="16.0" pickOnBounds="true" preserveRatio="true">
-               <image>
-                  <Image url="@../icon/play-skip-back-circle.png" />
-               </image>
-            </ImageView>
-         </graphic>
-      </Button>
-   </children>
+    <children>
+        <Button id="nextSongButton" fx:id="nextSongButton" layoutX="212.0" layoutY="4.0" mnemonicParsing="false">
+            <font>
+                <Font size="6.0" />
+            </font>
+            <graphic>
+                <ImageView fitHeight="16.0" fitWidth="16.0" pickOnBounds="true" preserveRatio="true">
+                    <image>
+                        <Image url="@../icon/play-skip-forward-circle.png" />
+                    </image>
+                </ImageView>
+            </graphic>
+        </Button>
+        <Button id="playPauseButton" fx:id="playPauseButton" layoutX="176.0" layoutY="4.0" mnemonicParsing="false" textFill="TRANSPARENT">
+            <font>
+                <Font size="6.0" />
+            </font>
+            <graphic>
+                <ImageView fx:id="playPauseImageView" fitHeight="16.0" fitWidth="16.0" pickOnBounds="true" preserveRatio="true">
+                    <image>
+                        <Image url="@../icon/play.png" />
+                    </image>
+                </ImageView>
+            </graphic>
+        </Button>
+        <ImageView fx:id="trackCoverView" fitHeight="35.0" fitWidth="41.0" layoutX="14.0" layoutY="8.0" pickOnBounds="true" preserveRatio="true">
+            <fitWidth>100</fitWidth>
+            <preserveRatio>true</preserveRatio>
+            <effect>
+                <Glow />
+            </effect>
+        </ImageView>
+        <ProgressBar id="songProgressBar" fx:id="songProgressBar" layoutX="60.0" layoutY="30.0" prefHeight="8.0" prefWidth="176.0" progress="0.0" />
+        <Pane fx:id="songTitlePane" layoutX="60.0" layoutY="1.0" maxWidth="84" prefWidth="84">
+            <TextField id="songTitleTextField" fx:id="songTitleTextField" disable="true" editable="false" layoutY="2.0" maxHeight="25.0" prefHeight="25.0" prefWidth="260.0" />
+        </Pane>
+        <Button id="previousSongButton" fx:id="previousSongButton" layoutX="138.0" layoutY="2.0" mnemonicParsing="false" prefHeight="24.0" prefWidth="24.0">
+            <graphic>
+                <ImageView fitHeight="16.0" fitWidth="16.0" pickOnBounds="true" preserveRatio="true">
+                    <image>
+                        <Image url="@../icon/play-skip-back-circle.png" />
+                    </image>
+                </ImageView>
+            </graphic>
+        </Button>
+
+    </children>
 </AnchorPane>
