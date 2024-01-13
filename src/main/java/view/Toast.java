@@ -17,6 +17,7 @@ import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.text.Text;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
@@ -48,8 +49,10 @@ class Toast extends ToastControls {
     private Image pauseImage;
     private FadeTransition fadeTransition;
     private TranslateTransition songTitleTransition;
+    private PauseTransition songTitlePause;
     private double titlePaneStartPos;
     private double titlePaneEndPos;
+    private String currentSongTitle;
     private final PlayerController playerControllerInstance;
     private ScreenPosition toastPosition;
     private final ScheduledExecutorService scheduler;
@@ -61,7 +64,6 @@ class Toast extends ToastControls {
 
     private final Config config;
 
-    KeyFrame keyFrame;
     public Toast() {
         stage = new Stage();
         spotifyAPI = SpotifyAPIFactory.create();
@@ -69,6 +71,7 @@ class Toast extends ToastControls {
         playerControllerInstance = PlayerController.getInstance();
         toastPosition = ScreenPosition.TASKBAR_START;
         scheduler = Executors.newSingleThreadScheduledExecutor();
+        currentSongTitle = "Song title placeholder";
         config = Config.getInstance();
         logger = LoggerFactory.getLogger(Toast.class);
 
@@ -84,8 +87,6 @@ class Toast extends ToastControls {
         playPauseEvent = event -> playerControllerInstance.playPauseSong();
         nextSongEvent = event -> playerControllerInstance.skipToNextSong();
         previousSongEvent = event -> playerControllerInstance.skipToPreviousSong();
-
-
 
         try {
             playImage = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/icon/play.png")));
@@ -108,19 +109,12 @@ class Toast extends ToastControls {
             scene.setFill(Color.TRANSPARENT);
             stage.setScene(scene);
 
-
-
             initSpotifyAPI();
             choosePlaceForToast(toastPosition);
             addEventsToToastButtons();
-
-
-
         } catch (Throwable ex) {
             logger.warn("Exception during initializing toast view: " + ex.getMessage());
         }
-
-
     }
 
     private void addEventsToToastButtons() {
@@ -219,83 +213,65 @@ class Toast extends ToastControls {
 
     private void fetchAndSetCurrentSongTitle() {
 
-
-
-        // Assuming songTitlePane is your existing Pane
         Rectangle clip = new Rectangle();
 
-// Bind the width and height property of the rectangle to the pane
         clip.widthProperty().bind(songTitlePane.widthProperty());
         clip.heightProperty().bind(songTitlePane.heightProperty());
 
-// Set the clip on the pane
         songTitlePane.setClip(clip);
 
-// Your existing code
+        titlePaneStartPos = songTitlePane.getLayoutBounds().getMinX();
+        titlePaneEndPos = songTitlePane.getLayoutBounds().getWidth();
 
-
-        //songTitleTextField.relocate(0, 0);
-        songTitleTransition = new TranslateTransition(Duration.seconds(8), songTitleTextField);
-        songTitleTransition.setFromX(0);
-        songTitleTransition.setToX(-songTitleTextField.getLayoutBounds().getWidth());
-        titlePaneEndPos = songTitlePane.getWidth();
-
+        songTitleTransition = new TranslateTransition(Duration.seconds(5), songTitleTextField);
+        songTitlePause = new PauseTransition(Duration.seconds(3));
+        songTitleTransition.setFromX(titlePaneStartPos);
+        songTitleTransition.setToX(titlePaneEndPos);
 
         if (spotifyAPI.hasTrack()) {
             Track track = spotifyAPI.getTrack();
-            String songTitle = track.getName();
-            System.out.println(songTitle);
-            songTitleTextField.setText(songTitle);
+            currentSongTitle = track.getName();
+            songTitleTextField.setText(currentSongTitle);
 
-           m1();
-
-
+            songTitleTransitionFromStartToEnd();
         } else {
             logger.info("Track is not loaded yet. Try to unpause song.");
         }
     }
 
-    private void m1() {
-        // Create a pause of 5 seconds
-        PauseTransition pause = new PauseTransition(Duration.seconds(3));
+    private void songTitleTransitionFromStartToEnd() {
 
-
-        // Start the animation after the pause
-        pause.setOnFinished(e -> {
-
-            songTitleTransition.setFromX(-2);
-            songTitleTransition.setToX(-songTitlePane.getLayoutBounds().getWidth());
-            System.out.println("1");
+        songTitlePause.setOnFinished(pauseFinish -> {
+            songTitleTransition.setFromX(titlePaneStartPos);
+            songTitleTransition.setToX(-calculateSongTitleWidthInPx(currentSongTitle));
             songTitleTransition.playFromStart();
-            songTitleTransition.setOnFinished(e2 -> {
-                System.out.println("1 end");
-                m2();
+            songTitleTransition.setOnFinished(transitionFinish -> {
+
+                songTitleTransitionFromEndToStart();
             });
         });
-        pause.play();
+        songTitlePause.play();
     }
 
-    private void m2() {
+    private void songTitleTransitionFromEndToStart() {
 
-        PauseTransition pause = new PauseTransition(Duration.seconds(3));
-
-        pause.setOnFinished(e2 -> {
-            //transition.setCycleCount(Timeline.INDEFINITE);
+        songTitlePause.setOnFinished(pauseFinish -> {
             songTitleTransition.setFromX(titlePaneEndPos);
-            songTitleTransition.setToX(-2);
-
-            System.out.println("2");
-
+            songTitleTransition.setToX(titlePaneStartPos);
             songTitleTransition.playFromStart();
-
-            songTitleTransition.setOnFinished(e3 -> {
-                System.out.println("2 end");
-                m1();
+            songTitleTransition.setOnFinished(transitionFinish -> {
+                songTitleTransitionFromStartToEnd();
             });
         });
-        pause.play();
+        songTitlePause.play();
     }
 
+    private double calculateSongTitleWidthInPx(String songTitle) {
+
+        Text text = new Text(songTitle);
+        text.setFont(songTitleTextField.getFont());
+        return text.getBoundsInLocal().getWidth() * 1.2;
+    }
 
     private void getCurrentSongPositionAndUpdateProgressBar() throws InterruptedException {
 
