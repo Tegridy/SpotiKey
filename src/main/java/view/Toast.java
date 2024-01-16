@@ -109,6 +109,9 @@ class Toast extends ToastControls {
             scene.setFill(Color.TRANSPARENT);
             stage.setScene(scene);
 
+            songTitleTransition = new TranslateTransition(Duration.seconds(5), songTitleTextField);
+            songTitlePause = new PauseTransition(Duration.seconds(3));
+
             initSpotifyAPI();
             choosePlaceForToast(toastPosition);
             addEventsToToastButtons();
@@ -223,8 +226,6 @@ class Toast extends ToastControls {
         titlePaneStartPos = songTitlePane.getLayoutBounds().getMinX();
         titlePaneEndPos = songTitlePane.getLayoutBounds().getWidth();
 
-        songTitleTransition = new TranslateTransition(Duration.seconds(5), songTitleTextField);
-        songTitlePause = new PauseTransition(Duration.seconds(3));
         songTitleTransition.setFromX(titlePaneStartPos);
         songTitleTransition.setToX(titlePaneEndPos);
 

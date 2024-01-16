@@ -41,7 +41,7 @@
         </ImageView>
         <ProgressBar id="songProgressBar" fx:id="songProgressBar" layoutX="60.0" layoutY="30.0" prefHeight="8.0" prefWidth="176.0" progress="0.0" />
         <Pane fx:id="songTitlePane" layoutX="60.0" layoutY="1.0" maxWidth="84" prefWidth="84">
-            <TextField id="songTitleTextField" fx:id="songTitleTextField" disable="true" editable="false" layoutY="2.0" maxHeight="25.0" prefHeight="25.0" prefWidth="260.0" />
+            <TextField id="songTitleTextField" fx:id="songTitleTextField" disable="true" editable="false" layoutX="-6.0" layoutY="2.0" maxHeight="25.0" prefHeight="25.0" prefWidth="266.0" />
         </Pane>
         <Button id="previousSongButton" fx:id="previousSongButton" layoutX="138.0" layoutY="2.0" mnemonicParsing="false" prefHeight="24.0" prefWidth="24.0">
             <graphic>
