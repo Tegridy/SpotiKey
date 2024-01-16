@@ -1,35 +1,42 @@
 plugins {
     id 'application'
     id 'org.openjfx.javafxplugin' version '0.0.10'
-    id "com.github.johnrengelman.shadow" version "7.0.0"
+    id "com.github.johnrengelman.shadow" version "8.1.1"
 }
 
 group 'org.spotikey'
-version '1.0'
+version '1.2'
+
 
 repositories {
     mavenCentral()
+    maven { url 'https://jitpack.io' }
 }
 
 dependencies {
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.0'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.7.0'
 
-    implementation group: 'net.java.dev.jna', name: 'jna', version: '5.1.0'
+    implementation group: 'net.java.dev.jna', name: 'jna', version: '5.13.0'
+    implementation group: 'net.java.dev.jna', name: 'jna-platform', version: '5.13.0'
     implementation group: 'lc.kra.system', name: 'system-hook', version: '3.8'
     implementation group: 'com.googlecode.json-simple', name: 'json-simple', version: '1.1.1'
     implementation group: 'com.dustinredmond.fxtrayicon', name: 'FXTrayIcon', version: '3.0.0'
     implementation group: 'org.slf4j', name: 'slf4j-api', version: '1.7.31'
     implementation group: 'org.slf4j', name: 'slf4j-simple', version: '1.7.31'
+    implementation 'com.github.LabyStudio:java-spotify-api:+:all'
+    implementation group: 'org.openjfx', name: 'javafx-swing', version: '22-ea+16'
 }
 
 javafx {
-    version = "16"
-    modules = [ 'javafx.controls', 'javafx.fxml' ]
+    version = "20"
+    modules = [ 'javafx.controls', 'javafx.fxml', 'javafx.swing' ]
 }
 
 test {
     useJUnitPlatform()
 }
+
+applicationDefaultJvmArgs = ["-DSPOTIFY_API_DEBUG"]
 
 mainClassName = 'Main'

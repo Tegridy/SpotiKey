@@ -1,0 +1,33 @@
+#toast-background {
+    -fx-background-color: transparent;
+}
+
+#playPauseButton, #nextSongButton, #previousSongButton {
+    -fx-background-color: transparent;
+}
+
+#songTitleTextField {
+    -fx-text-fill: #FFF;
+    -fx-background-color: transparent;
+    -fx-max-height: 16px;
+}
+
+.progress-bar {
+    -fx-accent: #1DB954;
+    -fx-background-radius: 25px;
+    -fx-border-radius: 25px;
+}
+
+.progress-bar .bar {
+    -fx-background-insets: 0;
+    -fx-background-radius: 25px;
+    -fx-border-radius: 25px;
+}
+
+.progress-bar > .track {
+    -fx-border-radius: 25px;
+    -fx-background-radius: 25px;
+    -fx-text-box-border: transparent;
+    -fx-control-inner-background: transparent;
+    -fx-background-color: rgba(255, 255, 255, 0.1);
+}

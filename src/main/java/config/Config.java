@@ -3,31 +3,38 @@ package config;
 import lc.kra.system.keyboard.event.GlobalKeyEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import utils.ScreenPosition;
 
 public class Config {
 
     private static Config instance;
+    private final Logger logger;
 
-    private Logger logger;
+    private boolean controlMustBePressed;
+    private boolean altMustBePressed;
+    private boolean shiftMustBePressed;
 
-    boolean controlMustBePressed;
-    boolean altMustBePressed;
-    boolean shiftMustBePressed;
+    private int playPauseKey;
+    private int nextSongKey;
+    private int previousSongKey;
+    private int volumeUpKey;
+    private int volumeDownKey;
 
-    int playPauseKey;
-    int nextSongKey;
-    int previousSongKey;
-    int volumeUpKey;
-    int volumeDownKey;
+    private boolean playPauseKeyCombinationActivated;
+    private boolean nextSongKeyCombinationActivated;
+    private boolean previousSongKeyCombinationActivated;
+    private boolean volumeUpKeyCombinationActivated;
+    private boolean volumeDownKeyCombinationActivated;
 
-    boolean playPauseKeyCombinationActivated;
-    boolean nextSongKeyCombinationActivated;
-    boolean previousSongKeyCombinationActivated;
-    boolean volumeUpKeyCombinationActivated;
-    boolean volumeDownKeyCombinationActivated;
+    private boolean toastEnabled;
+    private ScreenPosition toastScreenPosition;
 
     private Config() {
+
         logger = LoggerFactory.getLogger(Config.class);
+
+        toastEnabled = true;
+        toastScreenPosition = ScreenPosition.TASKBAR_START;
 
         this.controlMustBePressed = true;
         this.altMustBePressed = false;
@@ -44,11 +51,11 @@ public class Config {
         this.volumeDownKey = GlobalKeyEvent.VK_L;
         volumeDownKeyCombinationActivated = false;
 
-        logger.info("Initialize config class");
-
+        logger.debug("Initialized config class");
     }
 
     public static Config getInstance() {
+
         if (instance == null) {
             instance = new Config();
         }
@@ -56,34 +63,30 @@ public class Config {
     }
 
     private boolean isModifierKeyPressed(GlobalKeyEvent event) {
+
         return controlMustBePressed == event.isControlPressed() &&
                 altMustBePressed == event.isMenuPressed() &&
                 shiftMustBePressed == event.isShiftPressed();
     }
 
     public boolean playPauseKeysPressed(GlobalKeyEvent event) {
-        return isModifierKeyPressed(event) &&
-                (event.getVirtualKeyCode() == playPauseKey);
+        return isModifierKeyPressed(event) && (event.getVirtualKeyCode() == playPauseKey);
     }
 
     public boolean nextSongKeysPressed(GlobalKeyEvent event) {
-        return isModifierKeyPressed(event) &&
-                (event.getVirtualKeyCode() == nextSongKey);
+        return isModifierKeyPressed(event) && (event.getVirtualKeyCode() == nextSongKey);
     }
 
     public boolean previousSongKeysPressed(GlobalKeyEvent event) {
-        return isModifierKeyPressed(event) &&
-                (event.getVirtualKeyCode() == previousSongKey);
+        return isModifierKeyPressed(event) && (event.getVirtualKeyCode() == previousSongKey);
     }
 
     public boolean volumeUpKeysPressed(GlobalKeyEvent event) {
-        return isModifierKeyPressed(event) &&
-                (event.getVirtualKeyCode() == volumeUpKey);
+        return isModifierKeyPressed(event) && (event.getVirtualKeyCode() == volumeUpKey);
     }
 
     public boolean volumeDownKeysPressed(GlobalKeyEvent event) {
-        return isModifierKeyPressed(event) &&
-                (event.getVirtualKeyCode() == volumeDownKey);
+        return isModifierKeyPressed(event) && (event.getVirtualKeyCode() == volumeDownKey);
     }
 
     public boolean controlMustBePressed() {
@@ -131,6 +134,7 @@ public class Config {
     }
 
     public void setPlayPauseKey(int playPauseKey) {
+
         if (playPauseKey == 0) {
             this.playPauseKey = this.getPlayPauseKey();
         } else {
@@ -147,6 +151,7 @@ public class Config {
     }
 
     public void setPreviousSongKey(int previousSongKey) {
+
         if (previousSongKey == 0) {
             this.previousSongKey = this.getPreviousSongKey();
         } else {
@@ -155,6 +160,7 @@ public class Config {
     }
 
     public void setVolumeUpKey(int volumeUpKey) {
+
         if (volumeUpKey == 0) {
             this.volumeUpKey = this.getVolumeUpKey();
         } else {
@@ -163,6 +169,7 @@ public class Config {
     }
 
     public void setVolumeDownKey(int volumeDownKey) {
+
         if (volumeDownKey == 0) {
             this.volumeDownKey = this.getVolumeDownKey();
         } else {
@@ -210,17 +217,19 @@ public class Config {
         this.volumeDownKeyCombinationActivated = volumeDownKeyCombinationActivated;
     }
 
-    @Override
-    public String toString() {
-        return "Config{" +
-                "controlMustBePressed=" + controlMustBePressed +
-                ", altMustBePressed=" + altMustBePressed +
-                ", shiftMustBePressed=" + shiftMustBePressed +
-                ", playPauseKey=" + playPauseKey +
-                ", nextSongKey=" + nextSongKey +
-                ", previousSongKey=" + previousSongKey +
-                ", volumeUpKey=" + volumeUpKey +
-                ", volumeDownKey=" + volumeDownKey +
-                '}';
+    public boolean isToastEnabled() {
+        return toastEnabled;
+    }
+
+    public void setToastEnabled(boolean toastEnabled) {
+        this.toastEnabled = toastEnabled;
+    }
+
+    public String getToastScreenPosition() {
+        return toastScreenPosition.name();
+    }
+
+    public void setToastScreenPosition(ScreenPosition toastScreenPosition) {
+        this.toastScreenPosition = toastScreenPosition;
     }
 }

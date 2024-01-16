@@ -7,35 +7,36 @@ import org.slf4j.LoggerFactory;
 
 public class AutoHotkeyLoader {
 
-    private final String userDir = System.getProperty("user.dir");
-    private final String autohotkeyDir = userDir + "\\app\\libs";
-    private final String scriptsDir = userDir + "\\app\\scripts\\SpotifyGlobalHotkeys.ahk";
+    private final String autohotkeyDir;
+    private final String scriptsDir;
     private static AutoHotkeyDll autoHotKeyDll;
     private final Logger logger;
 
 
     private AutoHotkeyLoader() {
-        logger = LoggerFactory.getLogger(AutoHotkeyLoader.class);
 
+        autohotkeyDir = "libs";
+        scriptsDir = "scripts/SpotifyGlobalHotkeys.ahk";
+        logger = LoggerFactory.getLogger(AutoHotkeyLoader.class);
         setLibsPath();
-        loadDll();
+        loadAutohotkeyDll();
         loadAhkScript();
     }
 
     private void setLibsPath() {
         System.setProperty("jna.library.path", autohotkeyDir);
-        logger.info("Set libs path");
+        logger.debug("Set libs path");
     }
 
-    private void loadDll() {
-        autoHotKeyDll = Native.load("AutoHotkey.dll", AutoHotkeyDll.class);
-        logger.info("Loaded autoHotkey.dll");
+    private void loadAutohotkeyDll() {
+        autoHotKeyDll = Native.loadLibrary("AutoHotkey.dll", AutoHotkeyDll.class);
+        logger.debug("Loaded autoHotkey.dll");
     }
 
     private void loadAhkScript() {
         autoHotKeyDll.ahkTextDll(new WString(""), new WString(""), new WString(""));
         autoHotKeyDll.addFile(new WString(scriptsDir), 1);
-        logger.info("Add script file to program");
+        logger.debug("Add spotify hotkeys script file to program");
     }
 
     public static AutoHotkeyDll getInstance() {

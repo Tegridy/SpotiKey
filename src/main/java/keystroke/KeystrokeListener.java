@@ -9,18 +9,17 @@ import player.PlayerController;
 import config.Config;
 
 
-public class KeystrokeListener extends Thread{
+public class KeystrokeListener extends Thread {
 
     private final Logger logger;
+    private final PlayerController playerController;
 
     public KeystrokeListener() {
 
         logger = LoggerFactory.getLogger(KeystrokeListener.class);
-
         GlobalKeyboardHook keyboardHook = new GlobalKeyboardHook(false); // Use false here to switch to hook instead of raw input
-
-        logger.info("Global keyboard hook successfully started");
-
+        playerController = PlayerController.getInstance();
+        logger.debug("Global keyboard hook successfully started");
         Config config = Config.getInstance();
 
         keyboardHook.addKeyListener(new GlobalKeyAdapter() {
@@ -29,15 +28,15 @@ public class KeystrokeListener extends Thread{
             public void keyPressed(GlobalKeyEvent event) {
 
             if (config.playPauseKeysPressed(event) && config.isPlayPauseKeyCombinationActivated()){
-                PlayerController.playPauseSong();
+                playerController.playPauseSong();
             } else if (config.nextSongKeysPressed(event) && config.isNextSongKeyCombinationActivated()) {
-                PlayerController.skipToNextSong();
+                playerController.skipToNextSong();
             } else if (config.previousSongKeysPressed(event) && config.isPreviousSongKeyCombinationActivated()) {
-                PlayerController.skipToPreviousSong();
+                playerController.skipToPreviousSong();
             } else if (config.volumeUpKeysPressed(event) && config.isVolumeUpKeyCombinationActivated()) {
-                PlayerController.volumeUp();
+                playerController.volumeUp();
             } else if (config.volumeDownKeysPressed(event) && config.isVolumeDownKeyCombinationActivated()) {
-                PlayerController.volumeDown();
+                playerController.volumeDown();
             }
             }
 

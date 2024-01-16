@@ -4,14 +4,13 @@ import com.dustinredmond.fxtrayicon.FXTrayIcon;
 import config.LoadConfig;
 import config.SaveConfig;
 import javafx.application.Platform;
+import javafx.beans.value.ChangeListener;
 import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.Hyperlink;
+import javafx.scene.control.*;
 import javafx.scene.control.MenuItem;
-import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.HBox;
@@ -20,9 +19,10 @@ import javafx.stage.Stage;
 import config.Config;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import utils.ScreenPosition;
 import utils.Utils;
 
-import java.awt.Desktop;
+import java.awt.*;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -30,46 +30,21 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Objects;
 
-public class ViewController {
+public class Settings extends SettingsControls {
 
-    private Stage stage;
-    private Logger logger;
-    private Config config;
+    private final Stage stage;
+    private final Logger logger;
+    private final Config config;
 
-    @FXML
-    CheckBox controlCheckBox;
-    @FXML
-    CheckBox altCheckBox;
-    @FXML
-    CheckBox shiftCheckBox;
-    @FXML
-    CheckBox playPauseCheckBox;
-    @FXML
-    CheckBox nextSongCheckBox;
-    @FXML
-    CheckBox previousSongCheckBox;
-    @FXML
-    CheckBox volumeUpCheckBox;
-    @FXML
-    CheckBox volumeDownCheckBox;
-    @FXML
-    TextField currentKeyTextField;
+    private Toast toast;
 
-    HBox currentlyActiveHBox;
-
-    @FXML
-    HBox playPauseHBox;
-    @FXML
-    HBox nextSongHBox;
-    @FXML
-    HBox previousSongHBox;
-    @FXML
-    HBox volumeUpHBox;
-    @FXML
-    HBox volumeDownHBox;
+    private HBox currentlyActiveHBox;
 
     private final ArrayList<HBox> hBoxes;
 
+    private final ToggleGroup taskbarPositionGroup;
+
+    private ChangeListener<? super Toggle> toggleListener;
     private int playPauseKeyCode;
     private int nextSongKeyCode;
     private int previousSongKeyCode;
@@ -77,58 +52,76 @@ public class ViewController {
     private int volumeDownKeyCode;
 
     @FXML
-    Hyperlink githubUrl;
+    private Hyperlink githubUrl;
     @FXML
-    Hyperlink iconAuthorUrl;
+    private Hyperlink iconAuthorUrl;
     @FXML
-    Hyperlink flaticonUrl;
+    private Hyperlink flaticonUrl;
 
-    public ViewController() {
+    public Settings() {
+
         stage = new Stage();
-        logger = LoggerFactory.getLogger(ViewController.class);
+        logger = LoggerFactory.getLogger(Settings.class);
         config = Config.getInstance();
         currentlyActiveHBox = null;
+        taskbarPositionGroup = new ToggleGroup();
 
         try {
             LoadConfig.loadConfigFromFile();
-
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/scene.fxml"));
-
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/settings.fxml"));
             loader.setController(this);
 
             stage.getIcons().add(
                     new Image(
                             Objects.requireNonNull(getClass().getResourceAsStream("/icon/keyboard-key-s-32.png"))));
 
-            initTrayIconMenu();
-
-
-            stage.initModality(Modality.APPLICATION_MODAL);
+            stage.initModality(Modality.NONE);
             stage.setResizable(false);
-
             stage.setScene(new Scene(loader.load()));
             stage.setTitle("SpotiKey");
 
-            logger.info("Scene loaded");
-
+            initTrayIconMenu();
             updateView();
-
             setUrlsOpener();
 
-        } catch (Throwable e) {
-            logger.warn("Exception during initializing view: " + e.getMessage());
-            e.printStackTrace();
+            taskbarStartRadio.setToggleGroup(taskbarPositionGroup);
+            taskbarEndRadio.setToggleGroup(taskbarPositionGroup);
+            bottomLeftRadio.setToggleGroup(taskbarPositionGroup);
+            bottomRightRadio.setToggleGroup(taskbarPositionGroup);
+
+        } catch (Exception ex) {
+            logger.warn("Exception during initializing view: " + ex.getMessage());
         }
 
-        this.hBoxes = new ArrayList<>(Arrays.asList(playPauseHBox, nextSongHBox,
+        hBoxes = new ArrayList<>(Arrays.asList(playPauseHBox, nextSongHBox,
                 previousSongHBox, volumeUpHBox, volumeDownHBox));
+
+        toastEnableCheckBox.setSelected(true);
+        toastEnableCheckBox.selectedProperty().addListener((observable, oldValue, newValue) -> {
+
+            if (newValue) {
+                taskbarPositionGroup.getToggles().forEach(toggle -> ((RadioButton) toggle).setDisable(false));
+            } else {
+                taskbarPositionGroup.getToggles().forEach(toggle -> ((RadioButton) toggle).setDisable(true));
+            }
+        });
+
+        taskbarStartRadio.setSelected(true);
+        enableToast();
     }
 
     private void initTrayIconMenu() {
+
         FXTrayIcon icon = new FXTrayIcon(stage, getClass().getResource("/icon/keyboard-key-s-32.png"));
 
         MenuItem settingsMenuItem = new MenuItem("Settings");
+        MenuItem toastActivation = new MenuItem("Show / Hide Toast");
         MenuItem exitAppMenuItem = new MenuItem("Exit");
+
+        toastActivation.setOnAction(event -> {
+            toastEnableCheckBox.setSelected(!toastEnableCheckBox.isSelected());
+            enableToast();
+        });
 
         settingsMenuItem.setOnAction(event -> {
             stage.show();
@@ -140,28 +133,43 @@ public class ViewController {
         });
 
         icon.addMenuItem(settingsMenuItem);
+        icon.addMenuItem(toastActivation);
         icon.addMenuItem(exitAppMenuItem);
 
         icon.show();
-
-        logger.info("Tray icon initialized");
     }
 
-    private void updateView() {
-        this.controlCheckBox.setSelected(config.controlMustBePressed());
-        this.altCheckBox.setSelected(config.altMustBePressed());
-        this.shiftCheckBox.setSelected(config.shiftMustBePressed());
+    public void updateView() {
 
-        this.playPauseCheckBox.setSelected(config.isPlayPauseKeyCombinationActivated());
-        this.nextSongCheckBox.setSelected(config.isNextSongKeyCombinationActivated());
-        this.previousSongCheckBox.setSelected(config.isPreviousSongKeyCombinationActivated());
-        this.volumeUpCheckBox.setSelected(config.isVolumeUpKeyCombinationActivated());
-        this.volumeDownCheckBox.setSelected(config.isVolumeDownKeyCombinationActivated());
+        Platform.runLater(() -> {
 
-        logger.info("Updated view");
+            controlCheckBox.setSelected(config.controlMustBePressed());
+            altCheckBox.setSelected(config.altMustBePressed());
+            shiftCheckBox.setSelected(config.shiftMustBePressed());
+
+            playPauseCheckBox.setSelected(config.isPlayPauseKeyCombinationActivated());
+            nextSongCheckBox.setSelected(config.isNextSongKeyCombinationActivated());
+            previousSongCheckBox.setSelected(config.isPreviousSongKeyCombinationActivated());
+            volumeUpCheckBox.setSelected(config.isVolumeUpKeyCombinationActivated());
+            volumeDownCheckBox.setSelected(config.isVolumeDownKeyCombinationActivated());
+
+            toastEnableCheckBox.setSelected(config.isToastEnabled());
+
+            if (toastEnableCheckBox.isSelected()) {
+
+                switch (ScreenPosition.valueOf(config.getToastScreenPosition())) {
+                    case SCREEN_LEFT -> bottomLeftRadio.setSelected(true);
+                    case SCREEN_RIGHT -> bottomRightRadio.setSelected(true);
+                    case TASKBAR_END -> taskbarEndRadio.setSelected(true);
+                    default -> taskbarStartRadio.setSelected(true);
+                }
+            }
+            logger.debug("Settings view updated.");
+        });
     }
 
     private void setUrlsOpener() {
+
         githubUrl.setOnAction(e -> {
             openURL("https://github.com/Tegridy/SpotiKey");
         });
@@ -176,11 +184,11 @@ public class ViewController {
     }
 
     private void openURL(String url) {
+
         try {
             Desktop.getDesktop().browse(new URL(url).toURI());
-        } catch (IOException | URISyntaxException e) {
-            logger.warn("Cannot open browser: " + e.getMessage());
-            e.printStackTrace();
+        } catch (IOException | URISyntaxException ex) {
+            logger.warn("Can't open browser: " + ex.getMessage());
         }
     }
 
@@ -188,9 +196,7 @@ public class ViewController {
     private void setCurrentlyActiveOption(Event event) {
 
         Object eventObject = event.getSource();
-
         resetHBoxesCssBgColorClass();
-
         String keyType = "";
 
         if (eventObject.equals(playPauseHBox)) {
@@ -225,42 +231,44 @@ public class ViewController {
             ((HBox) eventObject).setStyle("-fx-background-color: #2b8ed9;");
         }
 
-        logger.info(eventObject + " key is currently selected to change.");
+        logger.debug(eventObject + " key is currently selected to change.");
     }
 
     private void resetHBoxesCssBgColorClass() {
+
         hBoxes.forEach(item -> item.setStyle("-fx-background-color: transparent;"));
-        logger.info("Reset HBoxes background color");
     }
 
     private String findKeyCodeString(int playPauseKeyCode) {
+
         return Utils.keyCodes.get(playPauseKeyCode);
     }
 
     private void updateCurrentKeyTextField(String keyType) {
+
         currentKeyTextField.textProperty().setValue(keyType);
         logger.info("Updated currentKeyTextField with value: " + keyType);
     }
 
     @FXML
     public void assignNewKey(KeyEvent event) {
-        int pressedKeyCode = event.getCode().getCode();
 
+        int pressedKeyCode = event.getCode().getCode();
         String keyType = Utils.keyCodes.get(pressedKeyCode);
 
         if (currentlyActiveHBox != null) {
             if (currentlyActiveHBox.equals(playPauseHBox)) {
-                this.playPauseKeyCode = pressedKeyCode;
+                playPauseKeyCode = pressedKeyCode;
             } else if (currentlyActiveHBox.equals(nextSongHBox)) {
-                this.nextSongKeyCode = pressedKeyCode;
+                nextSongKeyCode = pressedKeyCode;
             } else if (currentlyActiveHBox.equals(previousSongHBox)) {
-                this.previousSongKeyCode = pressedKeyCode;
+                previousSongKeyCode = pressedKeyCode;
             } else if (currentlyActiveHBox.equals(volumeUpHBox)) {
-                this.volumeUpKeyCode = pressedKeyCode;
+                volumeUpKeyCode = pressedKeyCode;
             } else if (currentlyActiveHBox.equals(volumeDownHBox)) {
-                this.volumeDownKeyCode = pressedKeyCode;
+                volumeDownKeyCode = pressedKeyCode;
             }
-            logger.info("Assigned: " + keyType + " as "
+            logger.debug("Assigned: " + keyType + " as "
                     + currentlyActiveHBox.getId().replace("HBox", "") + " key.");
         }
 
@@ -268,12 +276,12 @@ public class ViewController {
     }
 
 
-
     @FXML
     private void saveConfig() {
-        config.setControlMustBePressed(this.controlCheckBox.isSelected());
-        config.setAltMustBePressed(this.altCheckBox.isSelected());
-        config.setShiftMustBePressed(this.shiftCheckBox.isSelected());
+
+        config.setControlMustBePressed(controlCheckBox.isSelected());
+        config.setAltMustBePressed(altCheckBox.isSelected());
+        config.setShiftMustBePressed(shiftCheckBox.isSelected());
 
         config.setPlayPauseKey(playPauseKeyCode);
         config.setPlayPauseKeyCombinationActivated(playPauseCheckBox.isSelected());
@@ -286,9 +294,45 @@ public class ViewController {
         config.setVolumeDownKey(volumeDownKeyCode);
         config.setVolumeDownKeyCombinationActivated(volumeDownCheckBox.isSelected());
 
-        logger.info("Config updated");
+        if (toast != null) {
+            config.setToastEnabled(toastEnableCheckBox.isSelected());
+            config.setToastScreenPosition(toast.getToastPosition());
+        }
 
         SaveConfig.saveConfigToFile(config);
+    }
+
+    @FXML
+    private void enableToast() {
+
+        if (toastEnableCheckBox.isSelected()) {
+            toast = new Toast();
+            addRadioButtonsHandler();
+        } else {
+            toast.disableToast();
+            toast = null;
+            if (toggleListener != null) {
+                taskbarPositionGroup.selectedToggleProperty().removeListener(toggleListener);
+            }
+        }
+    }
+
+    @FXML
+    public void addRadioButtonsHandler() {
+
+        toggleListener = (observable, oldValue, newValue) -> {
+            if (newValue == taskbarStartRadio) {
+                toast.setToastPosition(ScreenPosition.TASKBAR_START);
+            } else if (newValue == taskbarEndRadio) {
+                toast.setToastPosition(ScreenPosition.TASKBAR_END);
+            } else if (newValue == bottomLeftRadio) {
+                toast.setToastPosition(ScreenPosition.SCREEN_LEFT);
+            } else if (newValue == bottomRightRadio) {
+                toast.setToastPosition(ScreenPosition.SCREEN_RIGHT);
+            }
+        };
+
+        taskbarPositionGroup.selectedToggleProperty().addListener(toggleListener);
     }
 }
 

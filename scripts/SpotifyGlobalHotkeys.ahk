@@ -18,6 +18,17 @@
 
                     ; https://gist.github.com/jcsteh/7ccbc6f7b1b7eb85c1c14ac5e0d65195
 
+                    ; Make sure that toast is always on top
+                     #SingleInstance
+                     #NoTrayIcon
+
+                     settimer, showlbl, 50
+
+                     showlbl:
+                     WinGet, hwnd, ID, SpotiKeyToast
+                     WinSet, AlwaysOnTop, On, ahk_id %hwnd%
+                     return
+
                     ; Get the HWND of the Spotify main window.
                     getSpotifyHwnd() {
                     	WinGet, spotifyHwnd, ID, ahk_exe spotify.exe
@@ -154,4 +165,9 @@
                     		WinActivate, ahk_id %spotifyHwnd%
                     	}
                     	Return
+                    }
+
+                    mute()
+                    {
+                        SoundSet, +1, , mute
                     }
